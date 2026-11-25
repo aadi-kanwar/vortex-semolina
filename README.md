@@ -54,15 +54,23 @@ This adds 2 demo members (Priya Sharma, and Arjun Mehta with a 10% rate override
 
 ## 2. Making the first admin
 
-The first admin is created directly in the **production** Convex database:
+**Option A: environment variables (no terminal).** In the Convex dashboard → your **production** deployment → Settings → Environment variables, add:
+
+| Name | Value |
+|---|---|
+| `ADMIN_EMAIL` | you@company.com |
+| `ADMIN_NAME` | Your Name |
+| `ADMIN_PASSWORD` | a temporary password (8+ characters) |
+
+Open `/sign-in`. On load, the page creates that admin, but only if the deployment has no active admin yet. Sign in with the temporary password and choose your own. Then **delete `ADMIN_PASSWORD`** from the dashboard. It no longer works anyway, and once an admin exists the variables are ignored.
+
+**Option B: command line.**
 
 ```bash
 npx convex run --prod users:createAdmin '{"email":"you@company.com","name":"Your Name","password":"a-temporary-password"}'
 ```
 
 (With a deploy key instead of a logged-in CLI: `CONVEX_DEPLOY_KEY=<prod key> npx convex run users:createAdmin '{...}'`.)
-
-Sign in at `/sign-in` with that password. You'll be asked to choose your own straight away, so the temporary one in your shell history stops working.
 
 Running it again for an existing email promotes that user to admin and sets a new temporary password. Use this if you ever lock yourself out.
 

@@ -183,6 +183,40 @@ export const changePassword = action({
   },
 });
 
+export const hasActiveAdmin = internalQuery({
+  args: {},
+  handler: async (ctx) => {
+    const admins = await ctx.db.query("users").withIndex("by_role", (q) => q.eq("role", "admin")).collect();
+    return admins.some((a) => a.active);
+  },
+});
+
+/**
+ * First-admin bootstrap from Convex environment variables:
+ *   ADMIN_EMAIL, ADMIN_NAME, ADMIN_PASSWORD (temporary)
+ * The sign-in page calls this on load. It only acts while NO active admin
+ * exists, so it's safe to leave public. Remove ADMIN_PASSWORD afterwards.
+ */
+export const bootstrapAdmin = action({
+  args: {},
+  handler: async (ctx): Promise<"not_configured" | "exists" | "created"> => {
+    const email = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+    const password = process.env.ADMIN_PASSWORD;
+    if (!email || !password) return "not_configured";
+    if (await ctx.runQuery(internal.users.hasActiveAdmin, {})) return "exists";
+    if (await ctx.runQuery(internal.users.byEmail, { email })) return "exists";
+    await ctx.runMutation(internal.users.ensureSeededInternal, {});
+    try {
+      await newAccount(ctx, { email, name: process.env.ADMIN_NAME?.trim() || email.split("@")[0], password, role: "admin", mustChangePassword: true });
+    } catch (e) {
+      // Two tabs racing: the second one finds the email taken.
+      if (await ctx.runQuery(internal.users.byEmail, { email })) return "exists";
+      throw e;
+    }
+    return "created";
+  },
+});
+
 /**
  * Create the first admin. Run against the production deployment:
  *   npx convex run --prod users:createAdmin '{"email":"you@company.com","name":"Your Name","password":"a-temp-password"}'
