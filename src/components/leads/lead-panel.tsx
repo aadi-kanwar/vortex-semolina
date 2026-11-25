@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useMutation, useQuery } from "convex/react";
+import { useLocalState } from "@/hooks/use-local-state";
 import * as D from "@radix-ui/react-dialog";
 import { CalendarClock, X } from "lucide-react";
 import { toast } from "sonner";
@@ -16,7 +17,7 @@ import { Skeleton } from "@/components/ui/misc";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useLeadPanel } from "@/hooks/use-lead-panel";
 import { money, relative } from "@/lib/format";
-import { errorMessage } from "@/lib/utils";
+import { cn, errorMessage } from "@/lib/utils";
 import { AssigneeControl } from "./assignee";
 import { FieldDisplay, FieldEditor } from "./field-value";
 import { StatusMenu, useStatusChanger } from "./status-control";
@@ -113,61 +114,118 @@ function NoteBox({ lead }: { lead: Doc<"leads"> }) {
   );
 }
 
+type Tab = "details" | "activity" | "meeting";
+
 function PanelBody({ lead }: { lead: Doc<"leads"> }) {
   const { fields, isAdmin, me, settings, statusById } = useApp();
   const canEdit = isAdmin || lead.assignedTo === me._id;
   const { change, dialogs } = useStatusChanger();
   const setFollowUp = useMutation(api.leads.setFollowUp);
   const status = statusById.get(lead.statusId);
+  const [tab, setTab] = useLocalState<Tab>("leadPanel.tab", "details");
+  const meetings = useQuery(api.meetings.forLead, { leadId: lead._id });
+  const openMeeting = meetings?.find((m) => m.status === "requested" || m.status === "scheduled");
+  const tabs: { id: Tab; label: string; badge?: React.ReactNode }[] = [
+    { id: "details", label: "Details" },
+    { id: "activity", label: "Activity" },
+    {
+      id: "meeting",
+      label: "Meeting",
+      badge: openMeeting ? (
+        <span className={cn("size-1.5 rounded-full", openMeeting.status === "requested" ? "bg-warning-border" : "bg-primary")} aria-label={openMeeting.status === "requested" ? "needs Meet link" : "scheduled"} />
+      ) : null,
+    },
+  ];
+  const onTabKey = (e: React.KeyboardEvent) => {
+    const i = tabs.findIndex((t) => t.id === tab);
+    if (e.key === "ArrowRight") setTab(tabs[(i + 1) % tabs.length].id);
+    if (e.key === "ArrowLeft") setTab(tabs[(i + tabs.length - 1) % tabs.length].id);
+  };
+
   return (
-    <div className="grid min-h-0 flex-1 overflow-y-auto lg:grid-cols-[1fr_380px] lg:overflow-hidden">
-      <div className="space-y-4 p-5 lg:overflow-y-auto">
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="space-y-3 border-b border-border px-5 pt-4">
         <div className="flex flex-wrap items-center gap-2">
-          <StatusMenu statusId={lead.statusId} onChange={(s) => change(lead._id, s)} disabled={!canEdit} />
+          <StatusMenu statusId={lead.statusId} onChange={(s) => change(lead._id, s, lead.statusId)} disabled={!canEdit} />
           <AssigneeControl leadId={lead._id} assignedTo={lead.assignedTo} />
+          {lead.nextFollowUpAt ? (
+            <span className={cn("caption num ml-auto", lead.nextFollowUpAt <= Date.now() + 86400000 && "font-medium text-danger")}>
+              Follow-up {new Date(lead.nextFollowUpAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+            </span>
+          ) : null}
         </div>
         {!canEdit ? <p className="rounded-[8px] border border-warning-border bg-warning-bg px-3 py-2 text-[13px] text-warning-fg">Claim this lead to edit it.</p> : null}
-        <dl className="grid grid-cols-[120px_1fr] gap-2 border-b border-border pb-3">
-          <dt className="pt-1.5 text-[13px] text-fg-muted">Follow-up</dt>
-          <dd>
-            <Input
-              type="date"
-              className="h-8 w-[160px]"
-              disabled={!canEdit}
-              aria-label="Next follow-up date"
-              value={toDateInput(lead.nextFollowUpAt)}
-              onChange={(e) => setFollowUp({ id: lead._id, at: fromDateInput(e.target.value) }).then(() => toast.success("Follow-up updated")).catch((err) => toast.error(errorMessage(err)))}
-            />
-          </dd>
-          {status?.kind === "won" ? (
-            <>
-              <dt className="pt-1 text-[13px] text-fg-muted">Sale amount</dt>
-              <dd className="num pt-1 text-[14px] font-semibold">{money(lead.saleAmount, settings.currency)}</dd>
-            </>
-          ) : null}
-          {status?.kind === "lost" && lead.lostReason ? (
-            <>
-              <dt className="pt-1 text-[13px] text-fg-muted">Loss reason</dt>
-              <dd className="pt-1 text-[14px]">{lead.lostReason}</dd>
-            </>
-          ) : null}
-          <dt className="text-[13px] text-fg-muted">Created</dt>
-          <dd className="caption">{new Date(lead.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</dd>
-          <dt className="text-[13px] text-fg-muted">Last activity</dt>
-          <dd className="caption">{relative(lead.lastActivityAt)}</dd>
-        </dl>
-        <dl>
-          {fields.map((d) => (
-            <FieldRow key={d._id} def={d} lead={lead} canEdit={canEdit} />
+        <div role="tablist" aria-label="Lead sections" className="-mb-px flex gap-1" onKeyDown={onTabKey}>
+          {tabs.map((t) => (
+            <button
+              key={t.id}
+              role="tab"
+              id={`lp-tab-${t.id}`}
+              aria-selected={tab === t.id}
+              aria-controls={`lp-panel-${t.id}`}
+              tabIndex={tab === t.id ? 0 : -1}
+              onClick={() => setTab(t.id)}
+              className={cn(
+                "flex h-9 items-center gap-1.5 border-b-2 border-transparent px-2.5 text-[14px] font-medium text-fg-muted hover:text-fg",
+                tab === t.id && "border-primary text-fg",
+              )}
+            >
+              {t.label}
+              {t.badge}
+            </button>
           ))}
-        </dl>
-        <MeetingSection lead={lead} canEdit={canEdit} />
+        </div>
       </div>
-      <aside className="space-y-4 border-t border-border bg-background p-5 lg:overflow-y-auto lg:border-l lg:border-t-0" aria-label="Activity">
-        <h3 className="text-[14px] font-semibold">Activity</h3>
-        {canEdit ? <NoteBox lead={lead} /> : null}
-        <Timeline leadId={lead._id} />
-      </aside>
+
+      <div role="tabpanel" id={`lp-panel-${tab}`} aria-labelledby={`lp-tab-${tab}`} className="min-h-0 flex-1 overflow-y-auto p-5">
+        {tab === "details" ? (
+          <div className="space-y-4">
+            <dl className="grid grid-cols-[120px_1fr] gap-2 border-b border-border pb-3">
+              <dt className="pt-1.5 text-[13px] text-fg-muted">Follow-up</dt>
+              <dd>
+                <Input
+                  type="date"
+                  className="h-8 w-[160px]"
+                  disabled={!canEdit}
+                  aria-label="Next follow-up date"
+                  value={toDateInput(lead.nextFollowUpAt)}
+                  onChange={(e) => setFollowUp({ id: lead._id, at: fromDateInput(e.target.value) }).then(() => toast.success("Follow-up updated")).catch((err) => toast.error(errorMessage(err)))}
+                />
+              </dd>
+              {status?.kind === "won" ? (
+                <>
+                  <dt className="pt-1 text-[13px] text-fg-muted">Sale amount</dt>
+                  <dd className="num pt-1 text-[14px] font-semibold">{money(lead.saleAmount, settings.currency)}</dd>
+                </>
+              ) : null}
+              {status?.kind === "lost" && lead.lostReason ? (
+                <>
+                  <dt className="pt-1 text-[13px] text-fg-muted">Loss reason</dt>
+                  <dd className="pt-1 text-[14px]">{lead.lostReason}</dd>
+                </>
+              ) : null}
+              <dt className="text-[13px] text-fg-muted">Created</dt>
+              <dd className="caption">{new Date(lead.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</dd>
+              <dt className="text-[13px] text-fg-muted">Last activity</dt>
+              <dd className="caption">{relative(lead.lastActivityAt)}</dd>
+            </dl>
+            <dl>
+              {fields.map((d) => (
+                <FieldRow key={d._id} def={d} lead={lead} canEdit={canEdit} />
+              ))}
+            </dl>
+          </div>
+        ) : tab === "activity" ? (
+          <div className="mx-auto max-w-2xl space-y-5">
+            {canEdit ? <NoteBox lead={lead} /> : null}
+            <Timeline leadId={lead._id} />
+          </div>
+        ) : (
+          <div className="mx-auto max-w-2xl">
+            <MeetingSection lead={lead} canEdit={canEdit} />
+          </div>
+        )}
+      </div>
       {dialogs}
     </div>
   );

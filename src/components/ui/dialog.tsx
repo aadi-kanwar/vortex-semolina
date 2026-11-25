@@ -49,7 +49,7 @@ export function SheetContent({ className, children, title, ...props }: React.Com
       <D.Overlay className="fixed inset-0 z-40 bg-[var(--overlay)] data-[state=open]:animate-in data-[state=open]:fade-in-0" />
       <D.Content
         className={cn(
-          "fixed inset-y-0 right-0 z-40 flex w-full max-w-[920px] flex-col border-l border-border bg-surface data-[state=open]:animate-in data-[state=open]:slide-in-from-right",
+          "fixed inset-y-0 right-0 z-40 flex w-full max-w-[760px] flex-col border-l border-border bg-surface data-[state=open]:animate-in data-[state=open]:slide-in-from-right",
           className,
         )}
         {...props}

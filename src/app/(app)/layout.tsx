@@ -71,7 +71,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               <ThemeSync />
               <div className="flex min-h-dvh flex-col md:flex-row">
                 <Sidebar />
-                <main className="min-w-0 flex-1">{children}</main>
+                <main className="min-w-0 flex-1 pb-[calc(64px+env(safe-area-inset-bottom))] md:pb-0">{children}</main>
               </div>
               <LeadPanel />
             </CommandPaletteProvider>

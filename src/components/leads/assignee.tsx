@@ -52,9 +52,18 @@ export function AssigneeControl({ leadId, assignedTo }: { leadId: Id<"leads">; a
     );
   }
   const doAssign = async (userId?: Id<"users">) => {
+    const prev = assignedTo;
     try {
       await assign({ ids: [leadId], userId });
-      toast.success(userId ? "Lead assigned" : "Lead unassigned");
+      toast.success(userId ? "Lead assigned" : "Lead unassigned", {
+        action: {
+          label: "Undo",
+          onClick: () =>
+            assign({ ids: [leadId], userId: prev })
+              .then(() => toast.success("Assignment undone"))
+              .catch((e) => toast.error(errorMessage(e))),
+        },
+      });
     } catch (err) {
       toast.error(errorMessage(err));
     }

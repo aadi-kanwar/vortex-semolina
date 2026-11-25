@@ -29,11 +29,29 @@ export function useStatusChanger(listArgs?: LeadListArgs) {
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
 
-  const run = async (leadId: Id<"leads">, statusId: Id<"statuses">, extra: { saleAmount?: number; lostReason?: string; confirmVoid?: boolean } = {}) => {
+  const run = async (
+    leadId: Id<"leads">,
+    statusId: Id<"statuses">,
+    extra: { saleAmount?: number; lostReason?: string; confirmVoid?: boolean } = {},
+    from?: Id<"statuses">,
+  ) => {
     setBusy(true);
     try {
       await setStatus({ id: leadId, statusId, ...extra });
-      toast.success(`Status set to ${statusById.get(statusId)?.name}`);
+      const prev = from ? statusById.get(from) : undefined;
+      // Undo only open → open moves: Won/Lost changes have dialogs, amounts and commissions.
+      const undoable = prev && prev.kind === "open" && statusById.get(statusId)?.kind === "open";
+      toast.success(`Status set to ${statusById.get(statusId)?.name}`, {
+        action: undoable
+          ? {
+              label: "Undo",
+              onClick: () =>
+                setStatus({ id: leadId, statusId: prev._id })
+                  .then(() => toast.success(`Back to ${prev.name}`))
+                  .catch((e) => toast.error(errorMessage(e))),
+            }
+          : undefined,
+      });
       setPending(null);
     } catch (e) {
       const msg = errorMessage(e);
@@ -44,14 +62,15 @@ export function useStatusChanger(listArgs?: LeadListArgs) {
     }
   };
 
-  const change = (leadId: Id<"leads">, statusId: Id<"statuses">) => {
+  /** `from` = the lead's current status; enables Undo in the toast. */
+  const change = (leadId: Id<"leads">, statusId: Id<"statuses">, from?: Id<"statuses">) => {
     const s = statusById.get(statusId);
     if (!s) return;
     setAmount("");
     setReason("");
     if (s.kind === "won") setPending({ kind: "won", leadId, statusId });
     else if (s.kind === "lost") setPending({ kind: "lost", leadId, statusId });
-    else run(leadId, statusId);
+    else run(leadId, statusId, {}, from);
   };
 
   const dialogs = (

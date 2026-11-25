@@ -24,6 +24,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           {children}
           <Toaster
             position="bottom-right"
+            mobileOffset={{ bottom: 80 }}
             toastOptions={{
               style: { background: "var(--surface)", color: "var(--text)", border: "1px solid var(--border)", fontSize: 13 },
             }}

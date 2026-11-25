@@ -151,7 +151,7 @@ export function LeadsTable({ rows, listArgs, status, loadMore, selection, onSele
       id: "status",
       header: "Status",
       size: 160,
-      cell: ({ row }) => <StatusMenu statusId={row.original.statusId} disabled={!canEdit(row.original)} onChange={(s) => change(row.original._id, s)} />,
+      cell: ({ row }) => <StatusMenu statusId={row.original.statusId} disabled={!canEdit(row.original)} onChange={(s) => change(row.original._id, s, row.original.statusId)} />,
     });
     cols.push({ id: "assignee", header: "Assigned to", size: 160, cell: ({ row }) => <AssigneeControl leadId={row.original._id} assignedTo={row.original.assignedTo} /> });
     for (const def of otherDefs) {
@@ -359,7 +359,7 @@ export function LeadsTable({ rows, listArgs, status, loadMore, selection, onSele
                 <div className="truncate font-medium">{leadTitle(l.fields)}</div>
                 <div className="caption truncate">{[l.fields.company, l.fields.country].filter(Boolean).join(" · ")}</div>
               </button>
-              <StatusMenu statusId={l.statusId} disabled={!(isAdmin || l.assignedTo === me._id)} onChange={(s) => change(l._id, s)} />
+              <StatusMenu statusId={l.statusId} disabled={!(isAdmin || l.assignedTo === me._id)} onChange={(s) => change(l._id, s, l.statusId)} />
             </div>
             <div className="mt-2 flex items-center justify-between">
               <AssigneeControl leadId={l._id} assignedTo={l.assignedTo} />

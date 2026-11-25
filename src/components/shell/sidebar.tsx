@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useMutation, useQuery } from "convex/react";
-import { Bell, CalendarDays, Contact, KeyRound, LayoutDashboard, LogOut, Menu, Monitor, Moon, PanelLeftClose, PanelLeftOpen, Palette, Settings, Sun, Users, Wallet, X } from "lucide-react";
+import { Bell, CalendarDays, Contact, KeyRound, LayoutDashboard, LogOut, Menu, Monitor, MoreHorizontal, Moon, PanelLeftClose, PanelLeftOpen, Palette, Settings, Sun, Users, Wallet, X } from "lucide-react";
 import { api } from "@convex/_generated/api";
 import { useApp } from "@/components/app-data";
 import { VortexLogo } from "@/components/brand";
@@ -210,6 +210,44 @@ function SidebarBody({ onNavigate, collapsed, onToggle }: { onNavigate?: () => v
   );
 }
 
+function MobileTabBar({ onMore }: { onMore: () => void }) {
+  const pathname = usePathname();
+  const pending = useQuery(api.commissions.pendingCount);
+  const tabs: { href: string; label: string; icon: typeof Contact; dot?: boolean }[] = [
+    { href: "/dashboard", label: "Home", icon: LayoutDashboard },
+    { href: "/leads", label: "Leads", icon: Contact },
+    { href: "/calendar", label: "Calendar", icon: CalendarDays },
+    { href: "/commissions", label: "Pay", icon: Wallet, dot: !!pending },
+  ];
+  return (
+    <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] md:hidden">
+      {tabs.map((t) => {
+        const active = pathname === t.href || pathname.startsWith(t.href + "/");
+        return (
+          <Link
+            key={t.href}
+            href={t.href}
+            aria-current={active ? "page" : undefined}
+            className={cn("relative flex h-16 flex-col items-center justify-center gap-1 text-[12px] font-medium text-fg-muted", active && "text-primary")}
+          >
+            <span className={cn("grid h-7 w-12 place-items-center rounded-full", active && "bg-accent-soft text-accent-soft-fg")}>
+              <t.icon className="size-[20px]" strokeWidth={2} />
+            </span>
+            {t.label}
+            {t.dot ? <span className="absolute right-[calc(50%-18px)] top-2 size-2 rounded-full bg-warning-border" aria-label="pending" /> : null}
+          </Link>
+        );
+      })}
+      <button onClick={onMore} className="flex h-16 flex-col items-center justify-center gap-1 text-[12px] font-medium text-fg-muted" aria-label="More: team, settings, account">
+        <span className="grid h-7 w-12 place-items-center rounded-full">
+          <MoreHorizontal className="size-[20px]" />
+        </span>
+        More
+      </button>
+    </nav>
+  );
+}
+
 export function Sidebar() {
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useLocalState("sidebar.collapsed", false);
@@ -231,13 +269,14 @@ export function Sidebar() {
           <SidebarBody collapsed={collapsed} onToggle={() => setCollapsed((c) => !c)} />
         </div>
       </aside>
-      {/* Mobile top bar (< 768px) */}
-      <header className="sticky top-0 z-30 flex h-12 items-center gap-2 border-b border-border bg-surface px-4 md:hidden">
-        <button onClick={() => setOpen(true)} className="grid size-8 place-items-center rounded-[8px] hover:bg-surface-muted" aria-label="Open menu">
+      {/* Phones (< 768px): slim top bar + bottom tab bar; "More" opens the full menu. */}
+      <header className="sticky top-0 z-30 flex h-12 items-center justify-between border-b border-border bg-surface px-4 md:hidden">
+        <VortexLogo />
+        <button onClick={() => setOpen(true)} className="grid size-9 place-items-center rounded-[8px] text-fg-muted hover:bg-surface-muted" aria-label="Open menu">
           <Menu className="size-5" />
         </button>
-        <VortexLogo />
       </header>
+      <MobileTabBar onMore={() => setOpen(true)} />
       {open ? (
         <div className="fixed inset-0 z-50 md:hidden" role="dialog" aria-modal aria-label="Menu">
           <div className="absolute inset-0 bg-[var(--overlay)]" onClick={() => setOpen(false)} />

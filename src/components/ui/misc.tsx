@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import { VortexMark } from "@/components/brand";
 import { avatarClass, pillStyle } from "@/lib/colors";
 import { cn } from "@/lib/utils";
 
@@ -77,11 +78,15 @@ export function Segmented<T extends string>({
 
 export function EmptyState({ icon, title, hint, action }: { icon?: React.ReactNode; title: string; hint?: string; action?: React.ReactNode }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-2 px-6 py-12 text-center">
-      {icon ? <div className="mb-1 grid size-10 place-items-center rounded-full bg-surface-muted text-fg-muted [&_svg]:size-5">{icon}</div> : null}
-      <div className="text-[15px] font-medium">{title}</div>
-      {hint ? <p className="caption max-w-sm">{hint}</p> : null}
-      {action ? <div className="mt-2">{action}</div> : null}
+    <div className="relative flex flex-col items-center justify-center gap-2 overflow-hidden px-6 py-12 text-center">
+      {/* Brand watermark: the Vortex mark in faint lines behind the message. */}
+      <VortexMark className="pointer-events-none absolute left-1/2 top-1/2 size-56 -translate-x-1/2 -translate-y-1/2 text-fg opacity-[0.045]" />
+      <div className="relative flex flex-col items-center gap-2">
+        {icon ? <div className="mb-1 grid size-10 place-items-center rounded-full bg-surface-muted text-fg-muted [&_svg]:size-5">{icon}</div> : null}
+        <div className="text-[15px] font-medium">{title}</div>
+        {hint ? <p className="caption max-w-sm">{hint}</p> : null}
+        {action ? <div className="mt-2">{action}</div> : null}
+      </div>
     </div>
   );
 }

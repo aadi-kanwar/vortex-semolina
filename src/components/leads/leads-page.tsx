@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useConvex, useMutation, usePaginatedQuery } from "convex/react";
 import type { RowSelectionState } from "@tanstack/react-table";
-import { ArrowUpDown, Columns3, Download, Filter, Plus, Search, Upload, X } from "lucide-react";
+import { ArrowUpDown, Columns3, Download, Filter, Kanban, Plus, Search, Table2, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "@convex/_generated/api";
 import type { Id } from "@convex/_generated/dataModel";
@@ -21,12 +21,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown";
 import { Input, Label, NativeSelect } from "@/components/ui/input";
-import { Avatar, Swatch } from "@/components/ui/misc";
+import { Avatar, Segmented, Swatch } from "@/components/ui/misc";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useLocalState } from "@/hooks/use-local-state";
 import { cn, errorMessage } from "@/lib/utils";
 import { exportLeads } from "./export";
 import { ImportWizard } from "./import-wizard";
+import { LeadsBoard } from "./leads-board";
 import { LeadsTable, type ColumnsApi } from "./leads-table";
 import { NewLeadDialog } from "./new-lead-dialog";
 import type { LeadListArgs } from "./use-lead-mutations";
@@ -78,7 +79,9 @@ function FilterPopover({ filters, setFilters }: { filters: Filters; setFilters: 
               <label key={s._id} className="flex items-center gap-2 rounded-[6px] px-1 py-0.5 text-[14px] hover:bg-surface-muted">
                 <Checkbox
                   checked={filters.statusIds.includes(s._id)}
-                  onCheckedChange={(c) => setFilters({ ...filters, statusIds: c ? [...filters.statusIds, s._id] : filters.statusIds.filter((x) => x !== s._id) })}
+                  onCheckedChange={(c) =>
+                    setFilters({ ...filters, statusIds: c ? [...filters.statusIds, s._id] : filters.statusIds.filter((x) => x !== s._id) })
+                  }
                 />
                 <Swatch color={s.color} /> {s.name}
               </label>
@@ -228,10 +231,19 @@ function BulkBar({ ids, clear }: { ids: Id<"leads">[]; clear: () => void }) {
       </Button>
       <Dialog open={!!confirm} onOpenChange={(o) => !o && setConfirm(null)}>
         {confirm === "delete" ? (
-          <DialogContent title={`Delete ${ids.length} leads?`} description="Their activity and meetings are deleted too. Pending commissions are voided. This can’t be undone.">
+          <DialogContent
+            title={`Delete ${ids.length} leads?`}
+            description="Their activity and meetings are deleted too. Pending commissions are voided. This can’t be undone."
+          >
             <DialogFooter>
               <Button onClick={() => setConfirm(null)}>Cancel</Button>
-              <Button variant="primary" onClick={() => { setConfirm(null); run(bulkDelete({ ids }), `Deleted ${ids.length} leads`); }}>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  setConfirm(null);
+                  run(bulkDelete({ ids }), `Deleted ${ids.length} leads`);
+                }}
+              >
                 Delete
               </Button>
             </DialogFooter>
@@ -240,7 +252,14 @@ function BulkBar({ ids, clear }: { ids: Id<"leads">[]; clear: () => void }) {
           <DialogContent title={`Move ${ids.length} leads to ${confirm.name}?`} description="Won leads moved out of Won have their pending commission voided.">
             <DialogFooter>
               <Button onClick={() => setConfirm(null)}>Cancel</Button>
-              <Button variant="primary" onClick={() => { const c = confirm; setConfirm(null); run(bulkStatus({ ids, statusId: c.statusId }), `Updated ${ids.length} leads`); }}>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  const c = confirm;
+                  setConfirm(null);
+                  run(bulkStatus({ ids, statusId: c.statusId }), `Updated ${ids.length} leads`);
+                }}
+              >
                 Change status
               </Button>
             </DialogFooter>
@@ -257,6 +276,7 @@ export function LeadsPage() {
   const convex = useConvex();
   const [view, setView] = useLocalState<View>(`leads.view.${me._id}`, "all");
   const [sort, setSort] = useLocalState<SortKey>(`leads.sort.${me._id}`, "created:desc");
+  const [layout, setLayout] = useLocalState<"table" | "board">(`leads.layout.${me._id}`, "table");
   const [filters, setFilters] = useState<Filters>(EMPTY);
   const [q, setQ] = useState("");
   const [search, setSearch] = useState("");
@@ -349,7 +369,32 @@ export function LeadsPage() {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          <ColumnsMenu api={columnsApi} />
+          <Segmented<"table" | "board">
+            ariaLabel="Layout"
+            value={layout}
+            onChange={setLayout}
+            options={[
+              {
+                value: "table",
+                label: (
+                  <>
+                    <Table2 /> <span className="hidden lg:inline">Table</span>
+                  </>
+                ),
+                title: "Table",
+              },
+              {
+                value: "board",
+                label: (
+                  <>
+                    <Kanban /> <span className="hidden lg:inline">Board</span>
+                  </>
+                ),
+                title: "Board",
+              },
+            ]}
+          />
+          {layout === "table" ? <ColumnsMenu api={columnsApi} /> : null}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button disabled={exporting}>
@@ -370,31 +415,50 @@ export function LeadsPage() {
         </div>
       </div>
 
-      {isAdmin && selectedIds.length ? <BulkBar ids={selectedIds} clear={() => setSelection({})} /> : null}
+      {isAdmin && layout === "table" && selectedIds.length ? <BulkBar ids={selectedIds} clear={() => setSelection({})} /> : null}
 
-      <LeadsTable
-        rows={results}
-        listArgs={listArgs}
-        status={status}
-        loadMore={() => loadMore(100)}
-        selection={selection}
-        onSelectionChange={setSelection}
-        columnsMenuRef={columnsApi}
-        emptyAction={
-          isAdmin && view === "all" && !search ? (
-            <Button variant="primary" onClick={() => setImportOpen(true)}>
-              <Upload /> Import from Excel
-            </Button>
-          ) : (
-            <Button variant="primary" onClick={() => setNewOpen(true)}>
-              <Plus /> New lead
-            </Button>
-          )
-        }
-      />
+      {layout === "board" ? (
+        <LeadsBoard
+          rows={results}
+          listArgs={listArgs}
+          status={status}
+          loadMore={() => loadMore(100)}
+          emptyAction={
+            isAdmin && view === "all" && !search ? (
+              <Button variant="primary" onClick={() => setImportOpen(true)}>
+                <Upload /> Import from Excel
+              </Button>
+            ) : (
+              <Button variant="primary" onClick={() => setNewOpen(true)}>
+                <Plus /> New lead
+              </Button>
+            )
+          }
+        />
+      ) : (
+        <LeadsTable
+          rows={results}
+          listArgs={listArgs}
+          status={status}
+          loadMore={() => loadMore(100)}
+          selection={selection}
+          onSelectionChange={setSelection}
+          columnsMenuRef={columnsApi}
+          emptyAction={
+            isAdmin && view === "all" && !search ? (
+              <Button variant="primary" onClick={() => setImportOpen(true)}>
+                <Upload /> Import from Excel
+              </Button>
+            ) : (
+              <Button variant="primary" onClick={() => setNewOpen(true)}>
+                <Plus /> New lead
+              </Button>
+            )
+          }
+        />
+      )}
       <NewLeadDialog open={newOpen} onOpenChange={setNewOpen} />
       {isAdmin ? <ImportWizard open={importOpen} onOpenChange={setImportOpen} /> : null}
     </Page>
   );
 }
-
