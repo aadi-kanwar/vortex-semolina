@@ -30,14 +30,14 @@ The first run asks you to log in and create a project. It writes `CONVEX_DEPLOYM
    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
    CLERK_SECRET_KEY=sk_test_...
    NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-   NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
    ```
 3. Clerk Dashboard → **JWT Templates** → **New template** → **Convex**. Keep the name `convex`. Copy its **Issuer** URL.
 4. Set the issuer on the Convex deployment (not in `.env.local`):
    ```bash
    npx convex env set CLERK_JWT_ISSUER_DOMAIN https://<your-app>.clerk.accounts.dev
    ```
-5. Optional but recommended: Clerk → **Restrictions** → turn on **Restricted** sign-up mode, so only people you invite from the Team page can join.
+5. Clerk → **User & authentication → Email, phone, username**: make sure **Email address** and **Password** are on.
+6. Clerk → **Restrictions** → set sign-up mode to **Restricted**. Nobody signs up on their own; admins add people from the Team page.
 
 ### Run
 
@@ -53,31 +53,41 @@ Keep `npx convex dev` running in a second terminal.
 npm run seed         # = npx convex run seed:run
 ```
 
-This adds 2 demo members (Priya Sharma, and Arjun Mehta with a 10% rate override), 50 leads across all statuses, a few meetings on the next working days, and one Won lead with a pending commission. The demo members can't sign in; they only exist to fill the screens.
+This adds 2 demo members (Priya Sharma, and Arjun Mehta with a 10% rate override), 50 leads across all statuses, a few meetings on the next working days, and one Won lead with a pending commission. The demo members have no Clerk accounts; they only exist to fill the screens.
 
 ---
 
 ## 2. Making the first admin
 
-The **first person to sign in becomes admin**. More precisely: anyone who signs in while no active admin exists becomes admin. This still works if you ran the seed first, because seeded users are members.
-
-Everyone after that joins as a **member**. Admins can promote people on **Team**.
-
-If you lock yourself out:
+There's no self sign-up. The first admin is created directly in the **production** Convex database:
 
 ```bash
-npx convex run users:makeAdmin '{"email":"you@company.com"}'
+npx convex run --prod users:createAdmin '{"email":"you@company.com","name":"Your Name"}'
 ```
 
-## 3. Inviting the team
+(With a deploy key instead of a logged-in CLI: `CONVEX_DEPLOY_KEY=<prod deploy key> npx convex run users:createAdmin '{...}'`.)
 
-Go to **Team → Invite member** and enter an email. Clerk sends the invitation, and the new user lands on `/sign-up`. On their first sign-in they're added to Convex as a member.
+Then create the same email in Clerk: Dashboard → **Users → Create user**, with a password. Sign in at `/sign-in`. Your Clerk account is linked to the admin row by its verified email on first sign-in.
+
+The same command promotes an existing user to admin if you ever lock yourself out.
+
+## 3. Adding team members
+
+Admins go to **Team → Add member** and enter a name, email, role and temporary password. A readable password is generated for you, and you can copy the sign-in details to share.
+
+- This creates the Clerk account (via `/api/members`, using `CLERK_SECRET_KEY`) and the Convex user row.
+- On first sign-in, the member must replace the temporary password before they can use the app.
+- **Reset password** on the Team page sets a new temporary password, signs them out everywhere and forces another change.
+- Anyone else can change their own password from the key icon in the sidebar.
+- Someone who signs in without being added sees "No access yet".
 
 On the Team page admins can also:
 
 - change a member's role
 - deactivate a member. They can no longer use the app, but their leads stay assigned and visible to admins for reassignment.
 - set a per-member commission rate override
+
+Don't run `npm run seed` against production. Its demo users use `@example.com` addresses.
 
 ---
 
@@ -88,7 +98,7 @@ On the Team page admins can also:
 3. In Vercel → Project → **Settings → Environment Variables**, add:
    - `CONVEX_DEPLOY_KEY`: the production deploy key
    - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY`: your production Clerk instance's keys
-   - `NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in` and `NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up`
+   - `NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in`
 4. Set the **Build Command** to:
    ```
    npx convex deploy --cmd 'npm run build'

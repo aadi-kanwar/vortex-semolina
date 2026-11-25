@@ -5,6 +5,7 @@ import { RedirectToSignIn, SignOutButton } from "@clerk/nextjs";
 import { AppDataProvider } from "@/components/app-data";
 import { Sidebar } from "@/components/shell/sidebar";
 import { ThemeSync } from "@/components/shell/theme";
+import { ChangePassword, NoAccess } from "@/components/shell/account-screens";
 import { CommandPaletteProvider } from "@/components/shell/command-palette";
 import { LeadPanel } from "@/components/leads/lead-panel";
 import { Skeleton } from "@/components/ui/misc";
@@ -56,7 +57,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <RedirectToSignIn />
       </Unauthenticated>
       <Authenticated>
-        <AppDataProvider fallback={<ShellSkeleton />} deactivated={<Deactivated />}>
+        <AppDataProvider fallback={<ShellSkeleton />} deactivated={<Deactivated />} noAccess={<NoAccess />} changePassword={<ChangePassword />}>
           <Suspense fallback={<ShellSkeleton />}>
             <CommandPaletteProvider>
               <ThemeSync />

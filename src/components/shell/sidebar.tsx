@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useClerk } from "@clerk/nextjs";
 import { useMutation, useQuery } from "convex/react";
-import { Bell, CalendarDays, Contact, LayoutDashboard, LogOut, Menu, Settings, Users, Wallet, X } from "lucide-react";
+import { Bell, CalendarDays, Contact, KeyRound, LayoutDashboard, LogOut, Menu, Settings, Users, Wallet, X } from "lucide-react";
 import { api } from "@convex/_generated/api";
 import { useApp } from "@/components/app-data";
 import { Avatar } from "@/components/ui/misc";
@@ -89,7 +89,7 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
   const { me, isAdmin } = useApp();
   const leadCount = useQuery(api.leads.count);
   const pending = useQuery(api.commissions.pendingCount);
-  const { signOut } = useClerk();
+  const { signOut, openUserProfile } = useClerk();
   return (
     <div className="flex h-full flex-col gap-4 p-3">
       <div className="pt-1">
@@ -116,6 +116,9 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
             <div className="caption capitalize">{me.role}</div>
           </div>
           <Notifications />
+          <button onClick={() => openUserProfile()} className="grid size-7 place-items-center rounded-[6px] text-fg-muted hover:bg-surface-muted hover:text-fg" aria-label="Account and password" title="Account & password">
+            <KeyRound className="size-4" />
+          </button>
           <button onClick={() => signOut({ redirectUrl: "/sign-in" })} className="grid size-7 place-items-center rounded-[6px] text-fg-muted hover:bg-surface-muted hover:text-fg" aria-label="Sign out" title="Sign out">
             <LogOut className="size-4" />
           </button>

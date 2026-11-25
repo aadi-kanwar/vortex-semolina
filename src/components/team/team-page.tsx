@@ -1,7 +1,7 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation } from "convex/react";
-import { Mail, UserPlus, X } from "lucide-react";
+import { Copy, KeyRound, RefreshCw, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { api } from "@convex/_generated/api";
@@ -14,8 +14,47 @@ import { Input, Label, NativeSelect } from "@/components/ui/input";
 import { Avatar, Pill } from "@/components/ui/misc";
 import { errorMessage } from "@/lib/utils";
 
-type Invite = { id: string; email: string; createdAt: number };
-const emailSchema = z.string().trim().email("Enter a valid email");
+const addSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(80),
+  email: z.string().trim().email("Enter a valid email"),
+  role: z.enum(["admin", "member"]),
+  password: z.string().min(8, "Temporary password must be at least 8 characters").max(72),
+});
+
+/** Readable temporary password, e.g. "Kite-7342-Amber". */
+function tempPassword() {
+  const words = ["Amber", "Cedar", "Delta", "Ember", "Flint", "Harbor", "Indigo", "Juniper", "Kite", "Lumen", "Maple", "Nova", "Onyx", "Pixel", "Quartz", "River", "Sable", "Tango", "Violet", "Willow"];
+  const r = new Uint32Array(3);
+  crypto.getRandomValues(r);
+  return `${words[r[0] % words.length]}-${String(1000 + (r[1] % 9000))}-${words[r[2] % words.length]}`;
+}
+
+function PasswordField({ id, value, onChange }: { id: string; value: string; onChange: (v: string) => void }) {
+  return (
+    <div className="flex gap-2">
+      <Input id={id} value={value} onChange={(e) => onChange(e.target.value)} className="font-mono" autoComplete="off" />
+      <Button type="button" size="icon" aria-label="Generate password" title="Generate" onClick={() => onChange(tempPassword())}>
+        <RefreshCw />
+      </Button>
+      <Button
+        type="button"
+        size="icon"
+        aria-label="Copy password"
+        title="Copy"
+        onClick={() => navigator.clipboard.writeText(value).then(() => toast.success("Copied"), () => toast.error("Couldn’t copy"))}
+      >
+        <Copy />
+      </Button>
+    </div>
+  );
+}
+
+async function api_(method: "POST" | "PATCH", body: unknown) {
+  const r = await fetch("/api/members", { method, headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.error ?? "Request failed");
+  return data;
+}
 const rateSchema = z.coerce.number().min(0, "0–100").max(100, "0–100");
 
 function RateInput({ user }: { user: PublicUser }) {
@@ -63,48 +102,52 @@ export function TeamPage() {
   const { users, me } = useApp();
   const setRole = useMutation(api.users.setRole);
   const setActive = useMutation(api.users.setActive);
-  const [inviteOpen, setInviteOpen] = useState(false);
-  const [email, setEmail] = useState("");
+  const [addOpen, setAddOpen] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", role: "member" as "admin" | "member", password: "" });
   const [busy, setBusy] = useState(false);
-  const [invites, setInvites] = useState<Invite[] | null>(null);
+  const [created, setCreated] = useState<{ email: string; password: string } | null>(null);
+  const [resetFor, setResetFor] = useState<PublicUser | null>(null);
+  const [resetPw, setResetPw] = useState("");
 
-  const loadInvites = useCallback(async () => {
-    try {
-      const r = await fetch("/api/invite");
-      setInvites(r.ok ? await r.json() : []);
-    } catch {
-      setInvites([]);
-    }
-  }, []);
   useEffect(() => {
-    loadInvites();
-  }, [loadInvites]);
+    if (addOpen) {
+      setForm({ name: "", email: "", role: "member", password: tempPassword() });
+      setCreated(null);
+    }
+  }, [addOpen]);
+  useEffect(() => {
+    if (resetFor) setResetPw(tempPassword());
+  }, [resetFor]);
 
-  const invite = async (e: React.FormEvent) => {
+  const add = async (e: React.FormEvent) => {
     e.preventDefault();
-    const p = emailSchema.safeParse(email);
+    const p = addSchema.safeParse(form);
     if (!p.success) return toast.error(p.error.issues[0].message);
     setBusy(true);
     try {
-      const r = await fetch("/api/invite", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ email: p.data }) });
-      const body = await r.json();
-      if (!r.ok) throw new Error(body.error);
-      toast.success(`Invitation sent to ${body.email}`);
-      setEmail("");
-      setInviteOpen(false);
-      loadInvites();
+      await api_("POST", p.data);
+      toast.success(`${p.data.name} added`);
+      setCreated({ email: p.data.email.toLowerCase(), password: p.data.password });
     } catch (err) {
       toast.error(errorMessage(err));
     } finally {
       setBusy(false);
     }
   };
-  const revoke = async (id: string) => {
-    const r = await fetch(`/api/invite?id=${encodeURIComponent(id)}`, { method: "DELETE" });
-    if (r.ok) {
-      toast.success("Invitation revoked");
-      loadInvites();
-    } else toast.error("Could not revoke");
+  const reset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetFor) return;
+    if (resetPw.length < 8) return toast.error("Temporary password must be at least 8 characters");
+    setBusy(true);
+    try {
+      await api_("PATCH", { userId: resetFor._id, password: resetPw });
+      toast.success(`New temporary password set for ${resetFor.name}. Share it with them.`);
+      setResetFor(null);
+    } catch (err) {
+      toast.error(errorMessage(err));
+    } finally {
+      setBusy(false);
+    }
   };
   const run = async (p: Promise<unknown>, msg: string) => {
     try {
@@ -118,8 +161,8 @@ export function TeamPage() {
   return (
     <Page>
       <PageHeader title="Team" subtitle={`${users.filter((u) => u.active).length} active members · deactivated members’ leads stay visible to admins`}>
-        <Button variant="primary" onClick={() => setInviteOpen(true)}>
-          <UserPlus /> Invite member
+        <Button variant="primary" onClick={() => setAddOpen(true)}>
+          <UserPlus /> Add member
         </Button>
       </PageHeader>
       <div className="card overflow-x-auto">
@@ -162,13 +205,25 @@ export function TeamPage() {
                 <td className="px-4 py-2.5">
                   <RateInput user={u} />
                 </td>
-                <td className="px-4 py-2.5">{u.active ? <Pill color="#16A34A">Active</Pill> : <Pill color="#A1A1AA">Deactivated</Pill>}</td>
+                <td className="px-4 py-2.5">
+                  <div className="flex flex-wrap gap-1">
+                    {u.active ? <Pill color="#16A34A">Active</Pill> : <Pill color="#A1A1AA">Deactivated</Pill>}
+                    {!u.hasSignedIn ? <Pill color="#F59E0B">Never signed in</Pill> : u.mustChangePassword ? <Pill color="#F59E0B">Temp password</Pill> : null}
+                  </div>
+                </td>
                 <td className="px-4 py-2.5 text-right">
+                  <div className="flex justify-end gap-1.5">
+                  {u._id !== me._id ? (
+                    <Button size="sm" onClick={() => setResetFor(u)}>
+                      <KeyRound /> Reset password
+                    </Button>
+                  ) : null}
                   {u._id !== me._id ? (
                     <Button size="sm" variant={u.active ? "danger" : "outline"} onClick={() => run(setActive({ userId: u._id as Id<"users">, active: !u.active }), u.active ? `${u.name} deactivated` : `${u.name} reactivated`)}>
                       {u.active ? "Deactivate" : "Reactivate"}
                     </Button>
                   ) : null}
+                  </div>
                 </td>
               </tr>
             ))}
@@ -176,43 +231,80 @@ export function TeamPage() {
         </table>
       </div>
 
-      <h2 className="card-title mb-2 mt-6">Pending invitations</h2>
-      <div className="card">
-        {invites === null ? (
-          <p className="caption p-4">Loading…</p>
-        ) : invites.length === 0 ? (
-          <p className="caption p-4">No pending invitations.</p>
-        ) : (
-          <ul>
-            {invites.map((i) => (
-              <li key={i.id} className="flex items-center gap-2 border-b border-[var(--surface-muted)] px-4 py-2.5 last:border-0">
-                <Mail className="size-4 text-fg-muted" />
-                <span className="flex-1 text-[13px]">{i.email}</span>
-                <span className="caption">{new Date(i.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}</span>
-                <Button size="icon-sm" variant="ghost" aria-label={`Revoke invite for ${i.email}`} onClick={() => revoke(i.id)}>
-                  <X />
-                </Button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      <p className="caption mt-3">Members sign in at /sign-in with the email and temporary password you give them, then choose their own password. You can change your own password from the key icon in the sidebar.</p>
 
-      <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
-        <DialogContent title="Invite a member" description="They get an email from Clerk and join as a member. You can make them admin afterwards.">
-          <form onSubmit={invite}>
-            <Label htmlFor="inv-email">Email</Label>
-            <Input id="inv-email" type="email" autoFocus value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@company.com" />
+      <Dialog open={addOpen} onOpenChange={setAddOpen}>
+        {created ? (
+          <DialogContent title="Member added" description="Share these sign-in details privately. They’ll be asked to set their own password on first sign-in.">
+            <div className="space-y-2 rounded-[8px] bg-surface-muted p-3 text-[13px]">
+              <div>
+                <span className="text-fg-muted">Email:</span> {created.email}
+              </div>
+              <div>
+                <span className="text-fg-muted">Temporary password:</span> <span className="font-mono">{created.password}</span>
+              </div>
+            </div>
             <DialogFooter>
-              <Button type="button" onClick={() => setInviteOpen(false)}>
-                Cancel
+              <Button onClick={() => navigator.clipboard.writeText(`Email: ${created.email}\nTemporary password: ${created.password}\nSign in: ${window.location.origin}/sign-in`).then(() => toast.success("Copied"))}>
+                <Copy /> Copy details
               </Button>
-              <Button variant="primary" type="submit" disabled={busy}>
-                Send invite
+              <Button variant="primary" onClick={() => setAddOpen(false)}>
+                Done
               </Button>
             </DialogFooter>
-          </form>
-        </DialogContent>
+          </DialogContent>
+        ) : (
+          <DialogContent title="Add member" description="Creates their sign-in with a temporary password. They must change it the first time they sign in.">
+            <form onSubmit={add} className="space-y-3">
+              <div>
+                <Label htmlFor="am-name">Name</Label>
+                <Input id="am-name" autoFocus value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+              </div>
+              <div>
+                <Label htmlFor="am-email">Email</Label>
+                <Input id="am-email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="name@company.com" />
+              </div>
+              <div>
+                <Label htmlFor="am-role">Role</Label>
+                <NativeSelect id="am-role" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value as "admin" | "member" })} className="w-36">
+                  <option value="member">Member</option>
+                  <option value="admin">Admin</option>
+                </NativeSelect>
+              </div>
+              <div>
+                <Label htmlFor="am-pw">Temporary password</Label>
+                <PasswordField id="am-pw" value={form.password} onChange={(v) => setForm({ ...form, password: v })} />
+              </div>
+              <DialogFooter>
+                <Button type="button" onClick={() => setAddOpen(false)}>
+                  Cancel
+                </Button>
+                <Button variant="primary" type="submit" disabled={busy}>
+                  Add member
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        )}
+      </Dialog>
+
+      <Dialog open={!!resetFor} onOpenChange={(o) => !o && setResetFor(null)}>
+        {resetFor ? (
+          <DialogContent title={`Reset password · ${resetFor.name}`} description="Signs them out everywhere. They must choose a new password after signing in with this one.">
+            <form onSubmit={reset}>
+              <Label htmlFor="rp-pw">New temporary password</Label>
+              <PasswordField id="rp-pw" value={resetPw} onChange={setResetPw} />
+              <DialogFooter>
+                <Button type="button" onClick={() => setResetFor(null)}>
+                  Cancel
+                </Button>
+                <Button variant="primary" type="submit" disabled={busy}>
+                  Set password
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        ) : null}
       </Dialog>
     </Page>
   );

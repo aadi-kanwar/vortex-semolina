@@ -6,7 +6,7 @@ import { api } from "@convex/_generated/api";
 import type { Doc, Id } from "@convex/_generated/dataModel";
 import { errorMessage } from "@/lib/utils";
 
-type PublicUser = Omit<Doc<"users">, "clerkId">;
+type PublicUser = Omit<Doc<"users">, "clerkId"> & { hasSignedIn: boolean };
 type Settings = FunctionReturnType<typeof api.settings.get>;
 
 export interface AppData {
@@ -30,13 +30,26 @@ export function useApp() {
 }
 
 /** Syncs the Clerk user into Convex, then loads the lookups every screen needs. */
-export function AppDataProvider({ children, fallback, deactivated }: { children: React.ReactNode; fallback: React.ReactNode; deactivated: React.ReactNode }) {
+export function AppDataProvider({
+  children,
+  fallback,
+  deactivated,
+  noAccess,
+  changePassword,
+}: {
+  children: React.ReactNode;
+  fallback: React.ReactNode;
+  deactivated: React.ReactNode;
+  noAccess: React.ReactNode;
+  changePassword: React.ReactNode;
+}) {
   const store = useMutation(api.users.store);
   const [synced, setSynced] = useState(false);
+  const [denied, setDenied] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
   useEffect(() => {
     store()
-      .then(() => setSynced(true))
+      .then((r) => (r === "ok" ? setSynced(true) : setDenied(true)))
       .catch((e) => setSyncError(errorMessage(e)));
   }, [store]);
 
@@ -62,8 +75,10 @@ export function AppDataProvider({ children, fallback, deactivated }: { children:
     };
   }, [me, users, statuses, fields, settings]);
 
+  if (denied) return <>{noAccess}</>;
   if (syncError) return <div className="grid min-h-dvh place-items-center p-6 text-center text-[13px] text-danger">{syncError}</div>;
   if (me && !me.active) return <>{deactivated}</>;
+  if (me?.mustChangePassword) return <>{changePassword}</>;
   if (!value) return <>{fallback}</>;
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

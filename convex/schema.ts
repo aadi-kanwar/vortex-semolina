@@ -13,7 +13,8 @@ import {
 
 export default defineSchema({
   users: defineTable({
-    clerkId: v.string(),
+    // Set on first sign-in for admins created from the CLI; set at creation for members added from the Team page.
+    clerkId: v.optional(v.string()),
     name: v.string(),
     email: v.string(),
     avatarUrl: v.optional(v.string()),
@@ -21,6 +22,8 @@ export default defineSchema({
     active: v.boolean(),
     commissionRateOverride: v.optional(v.number()),
     themePreference: v.optional(themePreference),
+    // True while the user still has the temporary password an admin gave them.
+    mustChangePassword: v.optional(v.boolean()),
   })
     .index("by_clerkId", ["clerkId"])
     .index("by_email", ["email"])

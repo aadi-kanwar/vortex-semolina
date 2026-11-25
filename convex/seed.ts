@@ -15,11 +15,11 @@ export const run = internalMutation({
   args: {},
   handler: async (ctx) => {
     await ensureSeeded(ctx);
-    if (await ctx.db.query("users").withIndex("by_clerkId", (q) => q.eq("clerkId", "seed_priya")).unique()) {
+    if (await ctx.db.query("users").withIndex("by_email", (q) => q.eq("email", "priya@example.com")).first()) {
       return "Seed data already present";
     }
-    const priya = await ctx.db.insert("users", { clerkId: "seed_priya", name: "Priya Sharma", email: "priya@example.com", role: "member", active: true, themePreference: "system" });
-    const arjun = await ctx.db.insert("users", { clerkId: "seed_arjun", name: "Arjun Mehta", email: "arjun@example.com", role: "member", active: true, themePreference: "system", commissionRateOverride: 10 });
+    const priya = await ctx.db.insert("users", { name: "Priya Sharma", email: "priya@example.com", role: "member", active: true, themePreference: "system" });
+    const arjun = await ctx.db.insert("users", { name: "Arjun Mehta", email: "arjun@example.com", role: "member", active: true, themePreference: "system", commissionRateOverride: 10 });
     const members = [priya, arjun];
 
     const statuses = await ctx.db.query("statuses").withIndex("by_order").collect();
