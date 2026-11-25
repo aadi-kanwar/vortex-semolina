@@ -5,6 +5,8 @@
 // Refuses to replace existing keys (that would sign everyone out) unless --force.
 import { execFileSync } from "node:child_process";
 import { generateKeyPairSync } from "node:crypto";
+import { createRequire } from "node:module";
+import { dirname, join } from "node:path";
 
 const siteUrl = process.argv[2];
 const force = process.argv.includes("--force");
@@ -12,7 +14,12 @@ if (!siteUrl || !/^https?:\/\//.test(siteUrl)) {
   console.error("Usage: node scripts/set-auth-keys.mjs <site url, e.g. https://your-app.vercel.app> [--force]");
   process.exit(1);
 }
-const convex = (...args) => execFileSync("npx", ["convex", ...args], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+// Run the Convex CLI with this same Node binary: works on Windows too
+// (npx is npx.cmd there, which execFileSync can't start without a shell).
+const require = createRequire(import.meta.url);
+const pkgDir = dirname(require.resolve("convex/package.json"));
+const cli = join(pkgDir, require("convex/package.json").bin.convex);
+const convex = (...args) => execFileSync(process.execPath, [cli, ...args], { encoding: "utf8", stdio: ["ignore", "pipe", "inherit"] });
 
 const existing = convex("env", "list");
 if (/^JWT_PRIVATE_KEY\b/m.test(existing) && !force) {
