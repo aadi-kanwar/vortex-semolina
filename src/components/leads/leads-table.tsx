@@ -56,6 +56,7 @@ function FieldCell({ def, lead, canEdit, listArgs }: { def: Doc<"fieldDefinition
   const value = lead.fields[def.key];
   const save = async (v: unknown) => {
     setEditing(false);
+    if (JSON.stringify(v ?? null) === JSON.stringify(value ?? null)) return;
     try {
       await updateField({ id: lead._id, key: def.key, value: v ?? "" });
       toast.success(`${def.label} updated`);
@@ -77,7 +78,7 @@ function FieldCell({ def, lead, canEdit, listArgs }: { def: Doc<"fieldDefinition
   return (
     <div
       data-editable={canEdit ? "true" : undefined}
-      className={cn("flex min-w-0 items-center", canEdit && "cursor-text")}
+      className={cn("flex h-10 w-full min-w-0 items-center", canEdit && "cursor-text")}
       onDoubleClick={() => canEdit && setEditing(true)}
       onKeyDown={(e) => {
         if (canEdit && (e.key === "Enter" || e.key === "F2")) {
@@ -322,7 +323,7 @@ export function LeadsTable({ rows, listArgs, status, loadMore, selection, onSele
                       style={{ width: cell.column.getSize(), maxWidth: cell.column.getSize() }}
                       className="h-10 overflow-hidden border-b border-[var(--surface-muted)] px-3 focus:bg-accent-soft/40 focus:outline-2 focus:-outline-offset-2 focus:outline-primary"
                     >
-                      <div className="flex min-w-0 items-center overflow-hidden">{flexRender(cell.column.columnDef.cell, cell.getContext())}</div>
+                      <div className="flex w-full min-w-0 items-center overflow-hidden">{flexRender(cell.column.columnDef.cell, cell.getContext())}</div>
                     </td>
                   ))}
                 </tr>

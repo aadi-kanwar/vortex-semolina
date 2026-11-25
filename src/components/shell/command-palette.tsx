@@ -71,7 +71,7 @@ export function CommandPaletteProvider({ children }: { children: React.ReactNode
               </div>
               <Command.List className="max-h-[360px] overflow-y-auto p-2">
                 {results && results.length > 0 && (
-                  <Command.Group heading="Leads" className="[&_[cmdk-group-heading]]:caption [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1">
+                  <Command.Group heading="Leads" className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1 [&_[cmdk-group-heading]]:text-[12px] [&_[cmdk-group-heading]]:text-fg-muted">
                     {results.map((r) => {
                       const s = statusById.get(r.statusId);
                       return (
@@ -85,7 +85,8 @@ export function CommandPaletteProvider({ children }: { children: React.ReactNode
                   </Command.Group>
                 )}
                 {debounced && results && results.length === 0 ? <div className="caption px-2 py-3">No leads match “{debounced}”.</div> : null}
-                <Command.Group heading="Go to" className="[&_[cmdk-group-heading]]:caption [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1">
+                {nav.some((n) => !q || n.label.toLowerCase().includes(q.toLowerCase())) ? (
+                <Command.Group heading="Go to" className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1 [&_[cmdk-group-heading]]:text-[12px] [&_[cmdk-group-heading]]:text-fg-muted">
                   {nav
                     .filter((n) => !q || n.label.toLowerCase().includes(q.toLowerCase()))
                     .map((n) => (
@@ -94,6 +95,7 @@ export function CommandPaletteProvider({ children }: { children: React.ReactNode
                       </Command.Item>
                     ))}
                 </Command.Group>
+                ) : null}
               </Command.List>
             </Command>
           </D.Content>

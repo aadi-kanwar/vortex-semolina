@@ -34,7 +34,7 @@ type Mode = "day" | "week" | "month";
 type Ev = FunctionReturnType<typeof api.meetings.listRange>[number];
 type StatusKey = Ev["status"];
 
-const HOUR_PX = 48;
+const HOUR_PX = 72;
 const ALL_STATUSES: StatusKey[] = ["requested", "scheduled", "completed", "no_show", "cancelled"];
 
 function eventClass(s: StatusKey) {
@@ -126,9 +126,12 @@ function TimeGrid({ days, events }: { days: Date[]; events: Ev[] }) {
     const t = setInterval(() => setNow(Date.now()), 60000);
     return () => clearInterval(t);
   }, []);
+  // Scroll to 8 AM, or earlier if this range has an earlier meeting.
+  const firstHour = Math.min(8, ...events.filter((e) => days.some((d) => isSameDay(new Date(e.startUtc), d))).map((e) => new Date(e.startUtc).getHours()));
   useEffect(() => {
-    scroller.current?.scrollTo({ top: 8 * HOUR_PX - 8 });
-  }, []);
+    scroller.current?.scrollTo({ top: firstHour * HOUR_PX - 8 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [days[0] && +days[0], days.length]);
   const hours = Array.from({ length: 24 }, (_, i) => i);
   return (
     <div className="card overflow-hidden">

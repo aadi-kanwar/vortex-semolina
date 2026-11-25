@@ -130,8 +130,10 @@ export function Sidebar() {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <aside className="sticky top-0 hidden h-dvh w-[220px] shrink-0 border-r border-border bg-surface md:block">
-        <SidebarBody />
+      <aside className="hidden w-[220px] shrink-0 border-r border-border bg-surface md:block">
+        <div className="sticky top-0 h-dvh">
+          <SidebarBody />
+        </div>
       </aside>
       {/* Mobile top bar (< 768px) */}
       <header className="sticky top-0 z-30 flex h-12 items-center gap-2 border-b border-border bg-surface px-4 md:hidden">

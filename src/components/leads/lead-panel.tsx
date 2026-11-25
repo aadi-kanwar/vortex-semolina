@@ -33,6 +33,7 @@ function FieldRow({ def, lead, canEdit }: { def: Doc<"fieldDefinitions">; lead: 
   const value = lead.fields[def.key];
   const save = async (v: unknown) => {
     setEditing(false);
+    if (JSON.stringify(v ?? null) === JSON.stringify(value ?? null)) return;
     try {
       await updateField({ id: lead._id, key: def.key, value: v ?? "" });
     } catch (e) {

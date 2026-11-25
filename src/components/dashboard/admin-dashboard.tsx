@@ -35,7 +35,7 @@ function RevenueChart({ data, currency }: { data: { month: string; revenue: numb
             tickLine={false}
             axisLine={false}
             tick={{ fill: "var(--text-muted)", fontSize: 12 }}
-            tickFormatter={(v: number) => (currency === "INR" ? `${(v / unit).toLocaleString("en-IN", { maximumFractionDigits: 1 })}L` : `${(v / unit).toFixed(0)}k`)}
+            tickFormatter={(v: number) => (v === 0 ? "0" : currency === "INR" ? `${(v / unit).toLocaleString("en-IN", { maximumFractionDigits: 1 })}L` : `${(v / unit).toFixed(0)}k`)}
           />
           <Tooltip
             cursor={{ stroke: "var(--text-muted)", strokeDasharray: "3 3" }}
@@ -44,7 +44,7 @@ function RevenueChart({ data, currency }: { data: { month: string; revenue: numb
             formatter={(v: number) => [money(v, currency), "Won revenue"]}
           />
           <Line
-            type="monotone"
+            type="linear"
             dataKey="revenue"
             stroke="var(--primary)"
             strokeWidth={2}
@@ -145,7 +145,7 @@ export function AdminDashboard() {
                       <td className="num px-[18px] py-2.5 text-right font-semibold">{money(r.revenue, cur)}</td>
                       <td className="num px-[18px] py-2.5 text-right">{r.isOverride ? `${r.rate}% (override)` : `${r.rate}%`}</td>
                       <td className="num px-[18px] py-2.5 text-right">{money(r.commission, cur)}</td>
-                      <td className="num px-[18px] py-2.5 text-right font-medium text-warning-fg">{money(r.pending, cur)}</td>
+                      <td className={`num px-[18px] py-2.5 text-right font-medium ${r.pending ? "text-warning-fg" : "text-fg-muted"}`}>{r.pending ? money(r.pending, cur) : "—"}</td>
                     </tr>
                   ))}
                 </tbody>

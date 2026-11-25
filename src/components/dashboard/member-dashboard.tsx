@@ -90,7 +90,7 @@ export function MemberDashboard() {
             <Kpi label="Contacted" value={data.kpis.contacted} foot={<Delta now={data.kpis.contacted} prev={data.kpis.contactedPrev} label="" />} />
             <Kpi label="Meetings booked" value={data.kpis.booked} foot={<Delta now={data.kpis.booked} prev={data.kpis.bookedPrev} label="" />} />
             <Kpi label="Deals won" value={data.kpis.won} foot={<Delta now={data.kpis.won} prev={data.kpis.wonPrev} label="" />} />
-            <Kpi label="Meeting → won rate" value={pct(data.kpis.winRate)} foot={<Delta now={data.kpis.winRate} prev={data.kpis.winRatePrev} label="Book meetings to see your rate" points />} />
+            <Kpi label="Meeting → won rate" value={pct(data.kpis.winRate)} foot={<Delta now={data.kpis.winRate} prev={data.kpis.winRatePrev} label={data.kpis.booked ? "No meetings last period" : "Book meetings to see your rate"} points />} />
           </div>
 
           <div className="grid gap-4 lg:grid-cols-2">
