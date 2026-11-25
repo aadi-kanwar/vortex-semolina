@@ -193,14 +193,16 @@ function SidebarBody({ onNavigate, collapsed, onToggle }: { onNavigate?: () => v
               <div className="caption capitalize">{me.role}</div>
             </div>
             <Notifications />
-            <button onClick={() => setPwOpen(true)} className="grid size-7 place-items-center rounded-[6px] text-fg-muted hover:bg-surface-muted hover:text-fg" aria-label="Change password" title="Change password">
+          </div>
+          <div className="flex items-center gap-1">
+            <ThemeSwitch />
+            <button onClick={() => setPwOpen(true)} className="grid size-8 shrink-0 place-items-center rounded-[7px] text-fg-muted hover:bg-surface-muted hover:text-fg" aria-label="Change password" title="Change password">
               <KeyRound className="size-4" />
             </button>
-            <button onClick={() => signOut()} className="grid size-7 place-items-center rounded-[6px] text-fg-muted hover:bg-surface-muted hover:text-fg" aria-label="Sign out" title="Sign out">
+            <button onClick={() => signOut()} className="grid size-8 shrink-0 place-items-center rounded-[7px] text-fg-muted hover:bg-surface-muted hover:text-fg" aria-label="Sign out" title="Sign out">
               <LogOut className="size-4" />
             </button>
           </div>
-          <ThemeSwitch />
         </div>
       )}
       <ChangePasswordDialog open={pwOpen} onOpenChange={setPwOpen} />

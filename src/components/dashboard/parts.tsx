@@ -142,7 +142,7 @@ export function BarList({ rows, right }: { rows: { id: string; name: string; col
   return (
     <ul className="space-y-2">
       {rows.map((r, i) => (
-        <li key={r.id} className="grid grid-cols-[minmax(0,140px)_1fr_auto] items-center gap-3 text-[14px]" title={`${r.name}: ${r.count.toLocaleString("en-IN")}`}>
+        <li key={r.id} className="grid grid-cols-[minmax(0,170px)_1fr_auto] items-center gap-3 text-[14px]" title={`${r.name}: ${r.count.toLocaleString("en-IN")}`}>
           <span className="flex min-w-0 items-center gap-2">
             <Swatch color={r.color} />
             <span className="truncate text-fg-secondary">{r.name}</span>

@@ -47,7 +47,7 @@ export function ThemeSwitch() {
     <Segmented<Pref>
       ariaLabel="Theme"
       value={value}
-      className="w-full [&>button]:flex-1"
+      className="min-w-0 flex-1 [&>button]:flex-1"
       onChange={(t) => {
         setTheme(t);
         save({ theme: t }).catch(() => {});
