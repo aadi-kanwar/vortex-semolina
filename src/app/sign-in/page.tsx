@@ -5,6 +5,7 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { useAction, useConvexAuth, useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
 import { z } from "zod";
+import { VortexMark } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 
@@ -42,14 +43,14 @@ export default function SignInPage() {
   return (
     <main className="grid min-h-dvh place-items-center bg-background p-4">
       <div className="card w-full max-w-sm p-6">
-        <div className="mb-5 flex items-center gap-2">
-          <span className="grid size-7 place-items-center rounded-[7px] bg-primary text-[13px] font-bold text-primary-fg">L</span>
-          <span className="text-[15px] font-semibold">Lead Tracker</span>
+        <div className="mb-6 flex items-center gap-2.5">
+          <VortexMark className="size-8 text-primary" />
+          <span className="wordmark text-[24px]">Vortex</span>
         </div>
         <h1 className="page-title">Sign in</h1>
         <p className="caption mb-4 mt-1">Use the email and password your admin gave you.</p>
         {problems.length ? (
-          <div role="status" className="mb-4 space-y-1 rounded-[8px] border border-warning-border bg-warning-bg px-3 py-2 text-[12px] text-warning-fg">
+          <div role="status" className="mb-4 space-y-1 rounded-[8px] border border-warning-border bg-warning-bg px-3 py-2 text-[13px] text-warning-fg">
             <div className="font-semibold">Setup needed</div>
             {problems.map((p) => (
               <p key={p}>{p}</p>
@@ -85,7 +86,7 @@ export default function SignInPage() {
             <Input id="si-pw" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
           {error ? (
-            <p role="alert" className="text-[12px] text-danger">
+            <p role="alert" className="text-[13px] text-danger">
               {error}
             </p>
           ) : null}

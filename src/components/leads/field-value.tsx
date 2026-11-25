@@ -119,7 +119,7 @@ export function FieldEditor({
         <PopoverContent className="w-56 p-1" onKeyDown={(e) => e.key === "Escape" && onCancel()}>
           <div role="listbox" aria-label={def.label} aria-multiselectable={multi}>
             {!def.required && !multi ? (
-              <button className="w-full rounded-[6px] px-2 py-1.5 text-left text-[13px] text-fg-muted hover:bg-surface-muted" onClick={() => commit("")}>
+              <button className="w-full rounded-[6px] px-2 py-1.5 text-left text-[14px] text-fg-muted hover:bg-surface-muted" onClick={() => commit("")}>
                 Clear
               </button>
             ) : null}
@@ -144,7 +144,7 @@ export function FieldEditor({
             })}
             {(def.options ?? []).length === 0 ? <p className="caption p-2">No options yet. Add some in Settings → Lead fields.</p> : null}
             {multi ? (
-              <button className="mt-1 w-full rounded-[6px] bg-primary px-2 py-1.5 text-[12px] font-medium text-primary-fg" onClick={() => commit()}>
+              <button className="mt-1 w-full rounded-[6px] bg-primary px-2 py-1.5 text-[13px] font-medium text-primary-fg" onClick={() => commit()}>
                 Done
               </button>
             ) : null}

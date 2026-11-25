@@ -42,7 +42,7 @@ function FieldRow({ def, lead, canEdit }: { def: Doc<"fieldDefinitions">; lead: 
   };
   return (
     <div className="grid grid-cols-[120px_1fr] items-start gap-2 py-1">
-      <dt className="pt-1.5 text-[12px] text-fg-muted">
+      <dt className="pt-1.5 text-[13px] text-fg-muted">
         {def.label}
         {def.required ? <span className="text-danger"> *</span> : null}
       </dt>
@@ -55,7 +55,7 @@ function FieldRow({ def, lead, canEdit }: { def: Doc<"fieldDefinitions">; lead: 
           <div className="relative">
             <FieldEditor def={def} value={value} onCommit={save} onCancel={() => setEditing(false)} />
             {(def.type === "single_select" || def.type === "multi_select") && (
-              <div className="flex h-8 items-center px-2 text-[13px]">
+              <div className="flex h-8 items-center px-2 text-[14px]">
                 <FieldDisplay def={def} value={value} currency={settings.currency} />
               </div>
             )}
@@ -64,7 +64,7 @@ function FieldRow({ def, lead, canEdit }: { def: Doc<"fieldDefinitions">; lead: 
           <button
             disabled={!canEdit}
             onClick={() => setEditing(true)}
-            className="flex min-h-8 w-full items-center rounded-[6px] px-2 text-left text-[13px] hover:bg-surface-muted disabled:hover:bg-transparent"
+            className="flex min-h-8 w-full items-center rounded-[6px] px-2 text-left text-[14px] hover:bg-surface-muted disabled:hover:bg-transparent"
             aria-label={`Edit ${def.label}`}
           >
             <FieldDisplay def={def} value={value} currency={settings.currency} />
@@ -101,7 +101,7 @@ function NoteBox({ lead }: { lead: Doc<"leads"> }) {
     >
       <Textarea aria-label="Add a note" placeholder="Add a note…" value={text} maxLength={5000} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) (e.currentTarget.form as HTMLFormElement).requestSubmit(); }} />
       <div className="flex flex-wrap items-center gap-2">
-        <label className="flex items-center gap-1.5 text-[12px] text-fg-muted">
+        <label className="flex items-center gap-1.5 text-[13px] text-fg-muted">
           <CalendarClock className="size-4" /> Follow-up
           <Input type="date" value={follow} onChange={(e) => setFollow(e.target.value)} className="h-7 w-[140px]" aria-label="Set follow-up date" />
         </label>
@@ -126,9 +126,9 @@ function PanelBody({ lead }: { lead: Doc<"leads"> }) {
           <StatusMenu statusId={lead.statusId} onChange={(s) => change(lead._id, s)} disabled={!canEdit} />
           <AssigneeControl leadId={lead._id} assignedTo={lead.assignedTo} />
         </div>
-        {!canEdit ? <p className="rounded-[8px] border border-warning-border bg-warning-bg px-3 py-2 text-[12px] text-warning-fg">Claim this lead to edit it.</p> : null}
+        {!canEdit ? <p className="rounded-[8px] border border-warning-border bg-warning-bg px-3 py-2 text-[13px] text-warning-fg">Claim this lead to edit it.</p> : null}
         <dl className="grid grid-cols-[120px_1fr] gap-2 border-b border-border pb-3">
-          <dt className="pt-1.5 text-[12px] text-fg-muted">Follow-up</dt>
+          <dt className="pt-1.5 text-[13px] text-fg-muted">Follow-up</dt>
           <dd>
             <Input
               type="date"
@@ -141,19 +141,19 @@ function PanelBody({ lead }: { lead: Doc<"leads"> }) {
           </dd>
           {status?.kind === "won" ? (
             <>
-              <dt className="pt-1 text-[12px] text-fg-muted">Sale amount</dt>
-              <dd className="num pt-1 text-[13px] font-semibold">{money(lead.saleAmount, settings.currency)}</dd>
+              <dt className="pt-1 text-[13px] text-fg-muted">Sale amount</dt>
+              <dd className="num pt-1 text-[14px] font-semibold">{money(lead.saleAmount, settings.currency)}</dd>
             </>
           ) : null}
           {status?.kind === "lost" && lead.lostReason ? (
             <>
-              <dt className="pt-1 text-[12px] text-fg-muted">Loss reason</dt>
-              <dd className="pt-1 text-[13px]">{lead.lostReason}</dd>
+              <dt className="pt-1 text-[13px] text-fg-muted">Loss reason</dt>
+              <dd className="pt-1 text-[14px]">{lead.lostReason}</dd>
             </>
           ) : null}
-          <dt className="text-[12px] text-fg-muted">Created</dt>
+          <dt className="text-[13px] text-fg-muted">Created</dt>
           <dd className="caption">{new Date(lead.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</dd>
-          <dt className="text-[12px] text-fg-muted">Last activity</dt>
+          <dt className="text-[13px] text-fg-muted">Last activity</dt>
           <dd className="caption">{relative(lead.lastActivityAt)}</dd>
         </dl>
         <dl>
@@ -164,7 +164,7 @@ function PanelBody({ lead }: { lead: Doc<"leads"> }) {
         <MeetingSection lead={lead} canEdit={canEdit} />
       </div>
       <aside className="space-y-4 border-t border-border bg-background p-5 lg:overflow-y-auto lg:border-l lg:border-t-0" aria-label="Activity">
-        <h3 className="text-[13px] font-semibold">Activity</h3>
+        <h3 className="text-[14px] font-semibold">Activity</h3>
         {canEdit ? <NoteBox lead={lead} /> : null}
         <Timeline leadId={lead._id} />
       </aside>

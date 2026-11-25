@@ -72,10 +72,10 @@ function FilterPopover({ filters, setFilters }: { filters: Filters; setFilters: 
       </PopoverTrigger>
       <PopoverContent className="w-72 space-y-3 p-3">
         <div>
-          <div className="mb-1.5 text-[12px] font-medium text-fg-secondary">Status</div>
+          <div className="mb-1.5 text-[13px] font-medium text-fg-secondary">Status</div>
           <div className="grid max-h-48 gap-1 overflow-y-auto">
             {statuses.map((s) => (
-              <label key={s._id} className="flex items-center gap-2 rounded-[6px] px-1 py-0.5 text-[13px] hover:bg-surface-muted">
+              <label key={s._id} className="flex items-center gap-2 rounded-[6px] px-1 py-0.5 text-[14px] hover:bg-surface-muted">
                 <Checkbox
                   checked={filters.statusIds.includes(s._id)}
                   onCheckedChange={(c) => setFilters({ ...filters, statusIds: c ? [...filters.statusIds, s._id] : filters.statusIds.filter((x) => x !== s._id) })}
@@ -128,7 +128,7 @@ function FilterPopover({ filters, setFilters }: { filters: Filters; setFilters: 
             </NativeSelect>
           </div>
         ))}
-        <label className="flex items-center gap-2 text-[13px]">
+        <label className="flex items-center gap-2 text-[14px]">
           <Checkbox checked={filters.followUpDue} onCheckedChange={(c) => setFilters({ ...filters, followUpDue: !!c })} /> Follow-up due
         </label>
         {count ? (
@@ -190,7 +190,7 @@ function BulkBar({ ids, clear }: { ids: Id<"leads">[]; clear: () => void }) {
   };
   return (
     <div className="card mb-3 flex flex-wrap items-center gap-2 px-3 py-2" role="region" aria-label="Bulk actions">
-      <span className="num text-[13px] font-medium">{ids.length} selected</span>
+      <span className="num text-[14px] font-medium">{ids.length} selected</span>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button size="sm">Assign to…</Button>
@@ -323,7 +323,7 @@ export function LeadsPage() {
               aria-selected={view === v.id}
               onClick={() => setView(v.id)}
               className={cn(
-                "mx-0.5 h-8 shrink-0 rounded-[7px] px-3 text-[13px] font-medium text-fg-muted hover:bg-surface-muted hover:text-fg",
+                "mx-0.5 h-8 shrink-0 rounded-[7px] px-3 text-[14px] font-medium text-fg-muted hover:bg-surface-muted hover:text-fg",
                 view === v.id && "bg-accent-soft text-accent-soft-fg hover:bg-accent-soft hover:text-accent-soft-fg",
               )}
             >

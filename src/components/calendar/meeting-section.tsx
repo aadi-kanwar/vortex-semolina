@@ -77,7 +77,7 @@ export function MeetingSection({ lead, canEdit }: { lead: Doc<"leads">; canEdit:
   return (
     <section aria-label="Meeting" className="rounded-[10px] border border-border p-3">
       <div className="mb-2 flex items-center justify-between">
-        <h3 className="text-[13px] font-semibold">Meeting</h3>
+        <h3 className="text-[14px] font-semibold">Meeting</h3>
         {!active && canEdit ? (
           <Button size="sm" variant="primary" onClick={() => setDialog("new")}>
             <CalendarPlus /> Request meeting
@@ -88,13 +88,13 @@ export function MeetingSection({ lead, canEdit }: { lead: Doc<"leads">; canEdit:
         <div className="space-y-2.5">
           <div className="flex flex-wrap items-center gap-2">
             <Pill color={MEETING_STATUS[active.status].color}>{MEETING_STATUS[active.status].label}</Pill>
-            <span className="num text-[13px] font-medium">{timeIn(active.startUtc, viewer, "EEE d MMM · h:mm a")} {tzLabel(viewer)}</span>
+            <span className="num text-[14px] font-medium">{timeIn(active.startUtc, viewer, "EEE d MMM · h:mm a")} {tzLabel(viewer)}</span>
           </div>
           <div className="caption num">
             Client: {timeIn(active.startUtc, active.clientTimeZone, "EEE h:mm a")} {tzLabel(active.clientTimeZone)} ({active.clientTimeZone.replace(/_/g, " ")})
             {viewer !== settings.teamTimeZone ? ` · Team: ${timeIn(active.startUtc, settings.teamTimeZone)} ${tzLabel(settings.teamTimeZone)}` : ""}
           </div>
-          {active.notes ? <p className="text-[13px] text-fg-secondary">{active.notes}</p> : null}
+          {active.notes ? <p className="text-[14px] text-fg-secondary">{active.notes}</p> : null}
           {active.meetLink ? (
             <Button asChild variant="soft" size="sm">
               <a href={active.meetLink} target="_blank" rel="noreferrer">
@@ -128,7 +128,7 @@ export function MeetingSection({ lead, canEdit }: { lead: Doc<"leads">; canEdit:
       {past.length ? (
         <ul className="mt-3 space-y-1 border-t border-border pt-2">
           {past.map((m) => (
-            <li key={m._id} className="flex items-center justify-between text-[12px] text-fg-muted">
+            <li key={m._id} className="flex items-center justify-between text-[13px] text-fg-muted">
               <span className="num">{timeIn(m.startUtc, viewer, "d MMM yyyy · h:mm a")}</span>
               <Pill color={MEETING_STATUS[m.status].color}>{MEETING_STATUS[m.status].label}</Pill>
             </li>

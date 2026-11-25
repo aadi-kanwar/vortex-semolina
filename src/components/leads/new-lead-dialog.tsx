@@ -86,12 +86,12 @@ export function NewLeadDialog({ open, onOpenChange }: { open: boolean; onOpenCha
                     aria-invalid={!!errors[f.key]}
                   />
                 )}
-                {errors[f.key] ? <p className="mt-1 text-[12px] text-danger">{errors[f.key]}</p> : null}
+                {errors[f.key] ? <p className="mt-1 text-[13px] text-danger">{errors[f.key]}</p> : null}
               </div>
             );
           })}
           {isAdmin ? (
-            <label className="flex items-center gap-2 text-[13px]">
+            <label className="flex items-center gap-2 text-[14px]">
               <Checkbox checked={assignToMe} onCheckedChange={(c) => setAssignToMe(!!c)} /> Assign to me
             </label>
           ) : null}

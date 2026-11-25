@@ -11,10 +11,10 @@ import { useLeadMutations } from "./use-lead-mutations";
 
 export function AssigneeChip({ userId }: { userId?: Id<"users"> }) {
   const { userById } = useApp();
-  if (!userId) return <span className="inline-flex h-[22px] items-center rounded-full border border-warning-border bg-warning-bg px-2 text-[12px] font-medium text-warning-fg">Unassigned</span>;
+  if (!userId) return <span className="inline-flex h-[22px] items-center rounded-full border border-warning-border bg-warning-bg px-2 text-[13px] font-medium text-warning-fg">Unassigned</span>;
   const u = userById.get(userId);
   return (
-    <span className="inline-flex max-w-full items-center gap-1.5 rounded-full bg-surface-muted py-0.5 pl-0.5 pr-2 text-[12px] font-medium text-fg-secondary">
+    <span className="inline-flex max-w-full items-center gap-1.5 rounded-full bg-surface-muted py-0.5 pl-0.5 pr-2 text-[13px] font-medium text-fg-secondary">
       <Avatar id={userId} name={u?.name} url={u?.avatarUrl} size={18} />
       <span className="truncate">{u?.name ?? "Unknown"}</span>
       {u && !u.active ? <span className="text-fg-muted">(inactive)</span> : null}

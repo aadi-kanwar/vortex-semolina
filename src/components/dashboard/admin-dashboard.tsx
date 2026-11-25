@@ -29,17 +29,17 @@ function RevenueChart({ data, currency }: { data: { month: string; revenue: numb
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={rows} margin={{ top: 12, right: 12, bottom: 0, left: 0 }}>
           <CartesianGrid vertical={false} stroke="var(--border)" />
-          <XAxis dataKey="label" tickLine={false} axisLine={false} tick={{ fill: "var(--text-muted)", fontSize: 12 }} />
+          <XAxis dataKey="label" tickLine={false} axisLine={false} tick={{ fill: "var(--text-muted)", fontSize: 13 }} />
           <YAxis
             width={44}
             tickLine={false}
             axisLine={false}
-            tick={{ fill: "var(--text-muted)", fontSize: 12 }}
+            tick={{ fill: "var(--text-muted)", fontSize: 13 }}
             tickFormatter={(v: number) => (v === 0 ? "0" : currency === "INR" ? `${(v / unit).toLocaleString("en-IN", { maximumFractionDigits: 1 })}L` : `${(v / unit).toFixed(0)}k`)}
           />
           <Tooltip
             cursor={{ stroke: "var(--text-muted)", strokeDasharray: "3 3" }}
-            contentStyle={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12, color: "var(--text)" }}
+            contentStyle={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 13, color: "var(--text)" }}
             labelStyle={{ color: "var(--text-muted)" }}
             formatter={(v: number) => [money(v, currency), "Won revenue"]}
           />
@@ -110,7 +110,7 @@ export function AdminDashboard() {
             <Kpi
               label="Meetings this week"
               value={data.kpis.meetingsWeek}
-              foot={data.kpis.missingLinkWeek ? <span className="num text-[12px] font-medium text-danger">{data.kpis.missingLinkWeek} missing a Meet link</span> : <span className="caption">All have Meet links</span>}
+              foot={data.kpis.missingLinkWeek ? <span className="num text-[13px] font-medium text-danger">{data.kpis.missingLinkWeek} missing a Meet link</span> : <span className="caption">All have Meet links</span>}
             />
             <Kpi label={`Won revenue · ${range.label}`} value={money(data.kpis.revenue, cur)} foot={<Delta now={data.kpis.revenue} prev={data.kpis.revenuePrev} label="" format={(n) => money(n, cur)} />} />
             <Kpi label="Commission payable" tone="hero" value={money(data.kpis.payable, cur)} href="/commissions" hrefLabel="Review & mark paid →" />
@@ -118,8 +118,8 @@ export function AdminDashboard() {
 
           <Panel title="Team leaderboard" meta={`ranked by won revenue · ${range.label}`}>
             <div className="-mx-[18px] overflow-x-auto">
-              <table className="w-full min-w-[820px] text-[13px]">
-                <thead className="text-[12px] text-fg-muted">
+              <table className="w-full min-w-[820px] text-[14px]">
+                <thead className="text-[13px] text-fg-muted">
                   <tr className="border-b border-border">
                     {["#", "Member", "Leads", "Contacted", "Meetings", "Won", "Revenue", "Rate", "Commission", "Pending"].map((h, i) => (
                       <th key={h} className={`px-[18px] py-2 font-medium ${i > 1 ? "text-right" : "text-left"}`}>
@@ -160,7 +160,7 @@ export function AdminDashboard() {
                 right={(r, i) => (
                   <span className="inline-flex items-baseline gap-2">
                     <span>{r.count.toLocaleString("en-IN")}</span>
-                    <span className="w-10 text-[12px] font-normal text-fg-muted">{i === 0 ? "" : pct(data.funnel[i].conversion)}</span>
+                    <span className="w-10 text-[13px] font-normal text-fg-muted">{i === 0 ? "" : pct(data.funnel[i].conversion)}</span>
                   </span>
                 )}
               />
@@ -179,8 +179,8 @@ export function AdminDashboard() {
               <EmptyState icon={<CalendarCheck />} title="Every meeting has a link" hint="Requested meetings without a Meet link show up here." />
             ) : (
               <div className="-mx-[18px] overflow-x-auto">
-                <table className="w-full min-w-[640px] text-[13px]">
-                  <thead className="text-[12px] text-fg-muted">
+                <table className="w-full min-w-[640px] text-[14px]">
+                  <thead className="text-[13px] text-fg-muted">
                     <tr className="border-b border-border">
                       {["When", "Client", "Owner", "Status", ""].map((h) => (
                         <th key={h} className="px-[18px] py-2 text-left font-medium">

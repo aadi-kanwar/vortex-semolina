@@ -163,8 +163,8 @@ export function CommissionsPage() {
           <EmptyState icon={<Wallet />} title="No commissions yet" hint="A commission is created when a lead is marked Won with a sale amount." />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[760px] text-[13px]">
-              <thead className="text-[12px] text-fg-muted">
+            <table className="w-full min-w-[760px] text-[14px]">
+              <thead className="text-[13px] text-fg-muted">
                 <tr className="border-b border-border">
                   {isAdmin ? (
                     <th className="w-10 px-3 py-2">

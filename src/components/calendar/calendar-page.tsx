@@ -55,13 +55,13 @@ function EventPopover({ ev, children }: { ev: Ev; children: React.ReactNode }) {
         <div>
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <div className="truncate text-[14px] font-semibold">{ev.leadName}</div>
+              <div className="truncate text-[15px] font-semibold">{ev.leadName}</div>
               <div className="caption truncate">{[ev.company, ev.country].filter(Boolean).join(" · ")}</div>
             </div>
             <Pill color={MEETING_STATUS[ev.status].color}>{MEETING_STATUS[ev.status].label}</Pill>
           </div>
         </div>
-        <div className="space-y-1 text-[13px]">
+        <div className="space-y-1 text-[14px]">
           <div className="num">
             {timeIn(ev.startUtc, viewer, "EEE d MMM · h:mm")}–{timeIn(ev.endUtc, viewer, "h:mm a")} <span className="text-fg-muted">{tzLabel(viewer)}</span>
           </div>
@@ -70,9 +70,9 @@ function EventPopover({ ev, children }: { ev: Ev; children: React.ReactNode }) {
           </div>
           <div className="flex items-center gap-1.5 pt-1">
             <Avatar id={ev.ownerId} name={owner?.name} url={owner?.avatarUrl} size={20} />
-            <span className="text-[13px]">{owner?.name ?? "Unknown"}</span>
+            <span className="text-[14px]">{owner?.name ?? "Unknown"}</span>
           </div>
-          {ev.notes ? <p className="pt-1 text-[12px] text-fg-secondary">{ev.notes}</p> : null}
+          {ev.notes ? <p className="pt-1 text-[13px] text-fg-secondary">{ev.notes}</p> : null}
         </div>
         {ev.canEdit && ev.status === "requested" ? <MeetLinkForm meeting={ev} /> : null}
         <div className="flex gap-2">
@@ -104,7 +104,7 @@ function EventBlock({ ev, style }: { ev: Ev; style: React.CSSProperties }) {
         style={{ ...style, "--ev": MEETING_STATUS[ev.status].color } as React.CSSProperties}
         title={`${ev.leadName} · client time ${timeIn(ev.startUtc, ev.clientTimeZone)} ${tzLabel(ev.clientTimeZone)}`}
         aria-label={`${ev.leadName}, ${MEETING_STATUS[ev.status].label}, ${timeIn(ev.startUtc, viewer)}`}
-        className={cn("absolute overflow-hidden rounded-[6px] px-1.5 py-0.5 text-left text-[11px] leading-tight", eventClass(ev.status))}
+        className={cn("absolute overflow-hidden rounded-[6px] px-1.5 py-0.5 text-left text-[12px] leading-tight", eventClass(ev.status))}
       >
         <div className="flex items-center gap-1">
           <Avatar id={ev.ownerId} name={owner?.name} url={owner?.avatarUrl} size={14} />
@@ -142,7 +142,7 @@ function TimeGrid({ days, events }: { days: Date[]; events: Ev[] }) {
           return (
             <div key={+d} className="border-l border-border px-2 py-2 text-center">
               <div className="caption">{format(d, "EEE")}</div>
-              <div className={cn("num mx-auto mt-0.5 grid size-7 place-items-center rounded-full text-[14px] font-semibold", today && "bg-primary text-primary-fg")}>{format(d, "d")}</div>
+              <div className={cn("num mx-auto mt-0.5 grid size-7 place-items-center rounded-full text-[15px] font-semibold", today && "bg-primary text-primary-fg")}>{format(d, "d")}</div>
             </div>
           );
         })}
@@ -209,13 +209,13 @@ function MonthGrid({ anchor, events, onPickDay }: { anchor: Date; events: Ev[]; 
           const today = isSameDay(d, now);
           return (
             <div key={+d} className={cn("min-h-[96px] border-b border-l border-border p-1.5 [&:nth-child(7n+1)]:border-l-0", !isSameMonth(d, anchor) && "bg-background", today && "bg-accent-soft/30")}>
-              <button onClick={() => onPickDay(d)} className={cn("num mb-1 grid size-6 place-items-center rounded-full text-[12px] font-medium hover:bg-surface-muted", today && "bg-primary text-primary-fg hover:bg-primary", !isSameMonth(d, anchor) && "text-fg-muted")}>
+              <button onClick={() => onPickDay(d)} className={cn("num mb-1 grid size-6 place-items-center rounded-full text-[13px] font-medium hover:bg-surface-muted", today && "bg-primary text-primary-fg hover:bg-primary", !isSameMonth(d, anchor) && "text-fg-muted")}>
                 {format(d, "d")}
               </button>
               <div className="space-y-0.5">
                 {evs.slice(0, 3).map((e) => (
                   <EventPopover key={e._id} ev={e}>
-                    <button style={{ "--ev": MEETING_STATUS[e.status].color } as React.CSSProperties} className={cn("block w-full truncate rounded-[4px] px-1 text-left text-[11px]", eventClass(e.status))}>
+                    <button style={{ "--ev": MEETING_STATUS[e.status].color } as React.CSSProperties} className={cn("block w-full truncate rounded-[4px] px-1 text-left text-[12px]", eventClass(e.status))}>
                       <span className="num">{timeIn(e.startUtc, browserTz(), "h:mm")}</span> <span className="ev-title">{e.leadName}</span>
                     </button>
                   </EventPopover>
@@ -287,7 +287,7 @@ export function CalendarPage() {
             <ChevronRight />
           </Button>
         </div>
-        <h2 className="text-[15px] font-semibold">{title}</h2>
+        <h2 className="text-[16px] font-semibold">{title}</h2>
         <div className="ml-auto flex flex-wrap items-center gap-3">
           <NativeSelect aria-label="Whose meetings" value={who} onChange={(e) => setWho(e.target.value)} className="w-44">
             <option value="all">All meetings</option>
@@ -302,7 +302,7 @@ export function CalendarPage() {
           </NativeSelect>
           <fieldset className="flex flex-wrap items-center gap-3" aria-label="Statuses">
             {ALL_STATUSES.map((s) => (
-              <label key={s} className="flex items-center gap-1.5 text-[12px] text-fg-secondary">
+              <label key={s} className="flex items-center gap-1.5 text-[13px] text-fg-secondary">
                 <Checkbox checked={shown.includes(s)} onCheckedChange={(c) => setShown(c ? [...shown, s] : shown.filter((x) => x !== s))} />
                 {MEETING_STATUS[s].label}
               </label>

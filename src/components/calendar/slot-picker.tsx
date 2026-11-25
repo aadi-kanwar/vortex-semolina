@@ -100,7 +100,7 @@ export function MeetingDialog({
         </div>
         <div className="mt-4">
           <div className="mb-1.5 flex items-center justify-between">
-            <span className="text-[12px] font-medium text-fg-secondary">Free slots</span>
+            <span className="text-[13px] font-medium text-fg-secondary">Free slots</span>
             <span className="caption">
               Team {tzLabel(team)} → Client {tzLabel(clientTz)}
               {viewer !== team ? ` · you ${tzLabel(viewer)}` : ""}
@@ -127,8 +127,8 @@ export function MeetingDialog({
                     slot === s.startUtc && "border-primary bg-accent-soft text-accent-soft-fg hover:bg-accent-soft",
                   )}
                 >
-                  <div className="num text-[13px] font-medium">{timeIn(s.startUtc, team)}</div>
-                  <div className="num text-[11px] opacity-80">client {timeIn(s.startUtc, clientTz, "EEE h:mm a")}</div>
+                  <div className="num text-[14px] font-medium">{timeIn(s.startUtc, team)}</div>
+                  <div className="num text-[12px] opacity-80">client {timeIn(s.startUtc, clientTz, "EEE h:mm a")}</div>
                 </button>
               ))}
             </div>

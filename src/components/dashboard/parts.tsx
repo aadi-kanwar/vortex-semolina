@@ -95,7 +95,7 @@ export function Panel({ title, meta, action, children, className }: { title: str
 
 export function PanelLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
-    <Link href={href} className="link shrink-0 text-[12px]">
+    <Link href={href} className="link shrink-0 text-[13px]">
       {children}
     </Link>
   );
@@ -107,7 +107,7 @@ export function Delta({ now, prev, label, format = (n: number) => n.toLocaleStri
   if (d === 0) return <span className="caption">No change vs previous period</span>;
   const up = d > 0;
   return (
-    <span className={cn("text-[12px] font-medium num", up ? "text-success" : "text-danger")}>
+    <span className={cn("text-[13px] font-medium num", up ? "text-success" : "text-danger")}>
       {up ? "▲" : "▼"} {points ? `${Math.abs(d * 100).toFixed(0)} pts` : format(Math.abs(d))} <span className="font-normal text-fg-muted">vs previous period</span>
     </span>
   );
@@ -122,12 +122,12 @@ export function Kpi({ label, value, foot, tone, href, hrefLabel }: { label: stri
         tone === "hero" && "border-transparent bg-hero text-hero-fg",
       )}
     >
-      <div className={cn("text-[12px] font-medium", tone === "warning" ? "text-warning-fg" : tone === "hero" ? "text-hero-caption" : "text-fg-muted")}>{label}</div>
+      <div className={cn("text-[13px] font-medium", tone === "warning" ? "text-warning-fg" : tone === "hero" ? "text-hero-caption" : "text-fg-muted")}>{label}</div>
       <div className={cn("kpi-number mt-1", tone === "warning" && "text-warning-fg")}>{value}</div>
       <div className="mt-1 min-h-[18px]">
         {foot}
         {href ? (
-          <Link href={href} className={cn("text-[12px] font-medium hover:underline", tone === "hero" ? "text-hero-fg" : tone === "warning" ? "text-warning-fg" : "link")}>
+          <Link href={href} className={cn("text-[13px] font-medium hover:underline", tone === "hero" ? "text-hero-fg" : tone === "warning" ? "text-warning-fg" : "link")}>
             {hrefLabel}
           </Link>
         ) : null}
@@ -142,7 +142,7 @@ export function BarList({ rows, right }: { rows: { id: string; name: string; col
   return (
     <ul className="space-y-2">
       {rows.map((r, i) => (
-        <li key={r.id} className="grid grid-cols-[minmax(0,140px)_1fr_auto] items-center gap-3 text-[13px]" title={`${r.name}: ${r.count.toLocaleString("en-IN")}`}>
+        <li key={r.id} className="grid grid-cols-[minmax(0,140px)_1fr_auto] items-center gap-3 text-[14px]" title={`${r.name}: ${r.count.toLocaleString("en-IN")}`}>
           <span className="flex min-w-0 items-center gap-2">
             <Swatch color={r.color} />
             <span className="truncate text-fg-secondary">{r.name}</span>

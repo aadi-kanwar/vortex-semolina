@@ -85,6 +85,7 @@
 
 @theme inline {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-sora), var(--font-inter), ui-sans-serif, sans-serif;
   --color-background: var(--bg);
   --color-foreground: var(--text);
   --color-surface: var(--surface);
@@ -124,7 +125,7 @@
     border-color: var(--border);
   }
   html {
-    font-size: 14px;
+    font-size: 15px;
   }
   body {
     background: var(--bg);
@@ -151,28 +152,35 @@
     border: 1px solid var(--border);
     border-radius: 12px;
   }
+  .wordmark {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1;
+  }
   .card-title {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 600;
   }
   .page-title {
-    font-size: 22px;
+    font-family: var(--font-display);
+    font-size: 24px;
     font-weight: 600;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.025em;
   }
   .hero-number {
-    font-size: 30px;
+    font-size: 32px;
     font-weight: 700;
     letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
   }
   .kpi-number {
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
   }
   .caption {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--text-muted);
   }
   .link {

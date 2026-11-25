@@ -76,7 +76,7 @@ export function AppDataProvider({
   }, [me, users, statuses, fields, settings]);
 
   if (denied) return <>{noAccess}</>;
-  if (syncError) return <div className="grid min-h-dvh place-items-center p-6 text-center text-[13px] text-danger">{syncError}</div>;
+  if (syncError) return <div className="grid min-h-dvh place-items-center p-6 text-center text-[14px] text-danger">{syncError}</div>;
   if (me && !me.active) return <>{deactivated}</>;
   if (me?.mustChangePassword) return <>{changePassword}</>;
   if (!value) return <>{fallback}</>;

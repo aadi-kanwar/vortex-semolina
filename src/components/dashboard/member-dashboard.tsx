@@ -61,24 +61,24 @@ export function MemberDashboard() {
           {/* Commission row */}
           <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-3">
             <div className="card border-transparent bg-hero p-5 text-hero-fg">
-              <div className="text-[12px] font-medium text-hero-caption">Commission earned · {range.label}</div>
+              <div className="text-[13px] font-medium text-hero-caption">Commission earned · {range.label}</div>
               <div className="hero-number mt-1">{money(data.commission.earned, cur)}</div>
-              <div className="num mt-1 text-[12px] text-hero-caption">
+              <div className="num mt-1 text-[13px] text-hero-caption">
                 {data.commission.earnedDeals} deal{data.commission.earnedDeals === 1 ? "" : "s"} won · {money(data.commission.earnedSales, cur)} in sales · {data.rate}% rate
               </div>
             </div>
             <div className="card p-5">
-              <div className="text-[12px] font-medium text-fg-muted">Pending payout</div>
+              <div className="text-[13px] font-medium text-fg-muted">Pending payout</div>
               <div className="hero-number mt-1">{money(data.commission.pending, cur)}</div>
-              <div className="mt-1 flex items-center gap-1.5 text-[12px] text-fg-muted">
+              <div className="mt-1 flex items-center gap-1.5 text-[13px] text-fg-muted">
                 <span className="size-2 rounded-full bg-warning-border" aria-hidden />
                 {data.commission.pendingDeals} deal{data.commission.pendingDeals === 1 ? "" : "s"} awaiting admin approval
               </div>
             </div>
             <div className="card p-5">
-              <div className="text-[12px] font-medium text-fg-muted">Paid to date</div>
+              <div className="text-[13px] font-medium text-fg-muted">Paid to date</div>
               <div className="hero-number mt-1">{money(data.commission.paid, cur)}</div>
-              <div className="num mt-1 text-[12px] text-fg-muted">
+              <div className="num mt-1 text-[13px] text-fg-muted">
                 {data.commission.lastPaidAt ? `Last payout ${money(data.commission.lastPayout, cur)} on ${format(data.commission.lastPaidAt, "d MMM")}` : "No payouts yet"}
               </div>
             </div>
@@ -109,11 +109,11 @@ export function MemberDashboard() {
                   {data.upcoming.map((m) => (
                     <li key={m._id} className="flex items-center gap-3 py-2.5">
                       <div className="w-[64px] shrink-0 rounded-[8px] bg-surface-muted px-2 py-1.5 text-center">
-                        <div className="text-[11px] font-medium text-fg-muted">{timeIn(m.startUtc, viewer, "EEE d")}</div>
-                        <div className="num text-[12px] font-semibold">{timeIn(m.startUtc, viewer, "h:mm a")}</div>
+                        <div className="text-[12px] font-medium text-fg-muted">{timeIn(m.startUtc, viewer, "EEE d")}</div>
+                        <div className="num text-[13px] font-semibold">{timeIn(m.startUtc, viewer, "h:mm a")}</div>
                       </div>
                       <button className="min-w-0 flex-1 text-left" onClick={() => open(m.leadId)}>
-                        <div className="truncate text-[13px] font-medium">{m.leadName}</div>
+                        <div className="truncate text-[14px] font-medium">{m.leadName}</div>
                         <div className="caption num truncate">
                           {[m.city ?? cityFromTz(m.clientTimeZone), m.country].filter(Boolean).join(", ")} · client time {timeIn(m.startUtc, m.clientTimeZone)} {tzLabel(m.clientTimeZone)}
                         </div>
@@ -146,7 +146,7 @@ export function MemberDashboard() {
                     <li key={l._id}>
                       <button className="flex w-full items-start gap-2 py-2 text-left" onClick={() => open(l._id)}>
                         <div className="min-w-0 flex-1">
-                          <div className="truncate text-[13px] font-medium">{l.name}</div>
+                          <div className="truncate text-[14px] font-medium">{l.name}</div>
                           <div className="caption line-clamp-1">{l.lastNote ?? l.company ?? "No note"}</div>
                         </div>
                         <StatusPill statusId={l.statusId} />
@@ -165,10 +165,10 @@ export function MemberDashboard() {
                     <li key={l._id}>
                       <button className="flex w-full items-center gap-2 py-2 text-left" onClick={() => open(l._id)}>
                         <div className="min-w-0 flex-1">
-                          <div className="truncate text-[13px] font-medium">{l.name}</div>
+                          <div className="truncate text-[14px] font-medium">{l.name}</div>
                           <div className="caption truncate">{l.company ?? "—"}</div>
                         </div>
-                        <span className="num text-[12px] font-semibold text-danger">{Math.floor((Date.now() - l.lastActivityAt) / 86400000)} days</span>
+                        <span className="num text-[13px] font-semibold text-danger">{Math.floor((Date.now() - l.lastActivityAt) / 86400000)} days</span>
                       </button>
                     </li>
                   ))}
@@ -181,7 +181,7 @@ export function MemberDashboard() {
               ) : (
                 <ul className="space-y-2.5">
                   {data.recent.map((a) => (
-                    <li key={a._id} className="flex items-start gap-2 text-[13px]">
+                    <li key={a._id} className="flex items-start gap-2 text-[14px]">
                       <span className="mt-1.5 size-2 shrink-0 rounded-full" style={{ background: ACTIVITY_DOT[a.type] }} aria-hidden />
                       <button className="min-w-0 flex-1 text-left" onClick={() => open(a.leadId)}>
                         <span className="text-fg-secondary">{describe(a).replace(/^./, (c) => c.toUpperCase())}</span> <span className="font-medium">· {a.leadName}</span>

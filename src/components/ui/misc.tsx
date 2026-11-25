@@ -9,7 +9,7 @@ export function Skeleton({ className }: { className?: string }) {
 
 export function Pill({ color, children, className }: { color: string; children: React.ReactNode; className?: string }) {
   return (
-    <span style={pillStyle(color)} className={cn("pill inline-flex h-[22px] max-w-full items-center truncate rounded-full px-2 text-[12px] font-medium", className)}>
+    <span style={pillStyle(color)} className={cn("pill inline-flex h-[22px] max-w-full items-center truncate rounded-full px-2 text-[13px] font-medium", className)}>
       {children}
     </span>
   );
@@ -64,7 +64,7 @@ export function Segmented<T extends string>({
           title={o.title}
           onClick={() => onChange(o.value)}
           className={cn(
-            "inline-flex h-7 items-center justify-center gap-1 rounded-[6px] px-2.5 text-[12px] font-medium text-fg-muted transition-colors hover:text-fg [&_svg]:size-3.5",
+            "inline-flex h-7 items-center justify-center gap-1 rounded-[6px] px-2.5 text-[13px] font-medium text-fg-muted transition-colors hover:text-fg [&_svg]:size-3.5",
             value === o.value && "bg-surface text-fg shadow-seg",
           )}
         >
@@ -79,7 +79,7 @@ export function EmptyState({ icon, title, hint, action }: { icon?: React.ReactNo
   return (
     <div className="flex flex-col items-center justify-center gap-2 px-6 py-12 text-center">
       {icon ? <div className="mb-1 grid size-10 place-items-center rounded-full bg-surface-muted text-fg-muted [&_svg]:size-5">{icon}</div> : null}
-      <div className="text-[14px] font-medium">{title}</div>
+      <div className="text-[15px] font-medium">{title}</div>
       {hint ? <p className="caption max-w-sm">{hint}</p> : null}
       {action ? <div className="mt-2">{action}</div> : null}
     </div>
@@ -87,5 +87,5 @@ export function EmptyState({ icon, title, hint, action }: { icon?: React.ReactNo
 }
 
 export function Kbd({ children }: { children: React.ReactNode }) {
-  return <kbd className="rounded-[4px] border border-border bg-surface-muted px-1 text-[10px] font-medium text-fg-muted">{children}</kbd>;
+  return <kbd className="rounded-[4px] border border-border bg-surface-muted px-1 text-[11px] font-medium text-fg-muted">{children}</kbd>;
 }

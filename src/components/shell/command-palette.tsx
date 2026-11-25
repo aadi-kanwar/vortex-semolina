@@ -53,7 +53,7 @@ export function CommandPaletteProvider({ children }: { children: React.ReactNode
         ]
       : []),
   ];
-  const item = "flex cursor-default items-center gap-2 rounded-[6px] px-2 py-2 text-[13px] text-fg-secondary data-[selected=true]:bg-surface-muted data-[selected=true]:text-fg [&_svg]:size-4";
+  const item = "flex cursor-default items-center gap-2 rounded-[6px] px-2 py-2 text-[14px] text-fg-secondary data-[selected=true]:bg-surface-muted data-[selected=true]:text-fg [&_svg]:size-4";
 
   return (
     <Ctx.Provider value={{ open: () => setOpen(true) }}>
@@ -67,11 +67,11 @@ export function CommandPaletteProvider({ children }: { children: React.ReactNode
             <Command shouldFilter={false} label="Search">
               <div className="flex items-center gap-2 border-b border-border px-3">
                 <Search className="size-4 text-fg-muted" />
-                <Command.Input value={q} onValueChange={setQ} placeholder="Search leads, or jump to…" className="h-11 w-full bg-transparent text-[14px] outline-none placeholder:text-fg-muted" />
+                <Command.Input value={q} onValueChange={setQ} placeholder="Search leads, or jump to…" className="h-11 w-full bg-transparent text-[15px] outline-none placeholder:text-fg-muted" />
               </div>
               <Command.List className="max-h-[360px] overflow-y-auto p-2">
                 {results && results.length > 0 && (
-                  <Command.Group heading="Leads" className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1 [&_[cmdk-group-heading]]:text-[12px] [&_[cmdk-group-heading]]:text-fg-muted">
+                  <Command.Group heading="Leads" className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1 [&_[cmdk-group-heading]]:text-[13px] [&_[cmdk-group-heading]]:text-fg-muted">
                     {results.map((r) => {
                       const s = statusById.get(r.statusId);
                       return (
@@ -86,7 +86,7 @@ export function CommandPaletteProvider({ children }: { children: React.ReactNode
                 )}
                 {debounced && results && results.length === 0 ? <div className="caption px-2 py-3">No leads match “{debounced}”.</div> : null}
                 {nav.some((n) => !q || n.label.toLowerCase().includes(q.toLowerCase())) ? (
-                <Command.Group heading="Go to" className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1 [&_[cmdk-group-heading]]:text-[12px] [&_[cmdk-group-heading]]:text-fg-muted">
+                <Command.Group heading="Go to" className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1 [&_[cmdk-group-heading]]:text-[13px] [&_[cmdk-group-heading]]:text-fg-muted">
                   {nav
                     .filter((n) => !q || n.label.toLowerCase().includes(q.toLowerCase()))
                     .map((n) => (

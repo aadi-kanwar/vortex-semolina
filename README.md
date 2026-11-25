@@ -1,6 +1,6 @@
-# Lead Tracker
+# Vortex
 
-Internal lead tracking for a small sales / outreach team. Next.js (App Router) + Convex (database, server functions, live sync) + Convex Auth (email + password), styled with Tailwind + shadcn-style components in an Attio-like indigo-on-zinc theme with light, dark and system modes.
+Vortex: internal lead tracking for a small sales / outreach team. Next.js (App Router) + Convex (database, server functions, live sync) + Convex Auth (email + password), styled with Tailwind + shadcn-style components in an Attio-like indigo-on-zinc theme with light, dark and system modes.
 
 Features: a spreadsheet-style leads grid with saved views, inline editing, filters, bulk actions and Excel import/export; admin-defined custom fields and statuses; self-claim and assignment; a shared meeting calendar with server-side double-booking protection; commission tracking; and member and admin dashboards.
 

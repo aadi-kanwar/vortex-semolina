@@ -20,7 +20,7 @@ export function TimezoneSelect({ value, onChange, id }: { value: string; onChang
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-0">
         <Command label="Time zone">
-          <Command.Input placeholder="Search city or zone…" className="h-9 w-full border-b border-border bg-transparent px-3 text-[13px] outline-none" />
+          <Command.Input placeholder="Search city or zone…" className="h-9 w-full border-b border-border bg-transparent px-3 text-[14px] outline-none" />
           <Command.List className="max-h-64 overflow-y-auto p-1">
             <Command.Empty className="caption p-2">No match.</Command.Empty>
             {zones.map((z) => (
@@ -31,7 +31,7 @@ export function TimezoneSelect({ value, onChange, id }: { value: string; onChang
                   onChange(z);
                   setOpen(false);
                 }}
-                className="flex cursor-default items-center justify-between rounded-[6px] px-2 py-1.5 text-[13px] data-[selected=true]:bg-surface-muted"
+                className="flex cursor-default items-center justify-between rounded-[6px] px-2 py-1.5 text-[14px] data-[selected=true]:bg-surface-muted"
               >
                 <span>{z.replace(/_/g, " ")}</span>
                 <span className="caption">{tzLabel(z)}</span>

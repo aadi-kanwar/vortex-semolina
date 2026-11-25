@@ -280,7 +280,7 @@ export function LeadsTable({ rows, listArgs, status, loadMore, selection, onSele
       {/* Desktop grid */}
       <div className="card hidden overflow-hidden md:block">
         <div className="max-h-[calc(100dvh-260px)] overflow-auto">
-          <table ref={tableRef} role="grid" aria-rowcount={rows.length} className="w-full border-separate border-spacing-0 text-[13px]" style={{ width: table.getTotalSize(), minWidth: "100%" }} onKeyDown={onGridKey}>
+          <table ref={tableRef} role="grid" aria-rowcount={rows.length} className="w-full border-separate border-spacing-0 text-[14px]" style={{ width: table.getTotalSize(), minWidth: "100%" }} onKeyDown={onGridKey}>
             <thead className="sticky top-0 z-10 bg-surface">
               {table.getHeaderGroups().map((hg) => (
                 <tr key={hg.id}>
@@ -293,7 +293,7 @@ export function LeadsTable({ rows, listArgs, status, loadMore, selection, onSele
                       onDragStart={() => setDragCol(h.id)}
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={() => onDrop(h.id)}
-                      className={cn("group relative h-9 select-none border-b border-border px-3 text-left text-[12px] font-medium text-fg-muted", dragCol === h.id && "opacity-50")}
+                      className={cn("group relative h-9 select-none border-b border-border px-3 text-left text-[13px] font-medium text-fg-muted", dragCol === h.id && "opacity-50")}
                     >
                       {flexRender(h.column.columnDef.header, h.getContext())}
                       {h.column.getCanResize() ? (

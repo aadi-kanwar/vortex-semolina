@@ -141,15 +141,15 @@ function FieldDialog({ def, onClose }: { def?: Doc<"fieldDefinitions">; onClose:
               </NativeSelect>
             </div>
           </div>
-          <label className="flex items-center gap-2 text-[13px]">
+          <label className="flex items-center gap-2 text-[14px]">
             <Checkbox checked={required} disabled={def?.key === "name"} onCheckedChange={(c) => setRequired(!!c)} /> Required
           </label>
-          <label className="flex items-center gap-2 text-[13px]">
+          <label className="flex items-center gap-2 text-[14px]">
             <Checkbox checked={showInTable} onCheckedChange={(c) => setShowInTable(!!c)} /> Show in table by default
           </label>
           {isSelect ? (
             <div>
-              <div className="mb-1.5 text-[12px] font-medium text-fg-secondary">Options</div>
+              <div className="mb-1.5 text-[13px] font-medium text-fg-secondary">Options</div>
               <OptionsEditor options={options} onChange={setOptions} />
             </div>
           ) : null}
@@ -191,7 +191,7 @@ function FieldsTab() {
             <li key={f._id} {...p} className={cn("flex flex-wrap items-center gap-3 px-3 py-2.5", p.className)}>
               <GripVertical className="size-4 cursor-grab text-fg-muted" aria-hidden />
               <div className="min-w-[160px] flex-1">
-                <div className="text-[13px] font-medium">
+                <div className="text-[14px] font-medium">
                   {f.label} {f.required ? <span className="text-danger">*</span> : null}
                 </div>
                 <div className="caption">
@@ -230,11 +230,11 @@ function FieldsTab() {
       </ul>
       {archived.length ? (
         <>
-          <h3 className="mb-2 mt-6 text-[13px] font-semibold text-fg-muted">Archived</h3>
+          <h3 className="mb-2 mt-6 text-[14px] font-semibold text-fg-muted">Archived</h3>
           <ul className="card divide-y divide-[var(--surface-muted)]">
             {archived.map((f) => (
               <li key={f._id} className="flex items-center gap-3 px-3 py-2.5">
-                <div className="flex-1 text-[13px] text-fg-muted">
+                <div className="flex-1 text-[14px] text-fg-muted">
                   {f.label} <span className="caption">· {f.key}</span>
                 </div>
                 <Button size="sm" onClick={() => attempt(setArchived({ id: f._id, archived: false }), `${f.label} restored`)}>
@@ -403,7 +403,7 @@ function MeetingsTab() {
         <div>
           <Label>Slot length</Label>
           {/* DECISION: slot length is fixed at 30 min (spec); shown read-only. */}
-          <div className="flex h-8 items-center text-[13px]">{settings.slotMinutes} minutes</div>
+          <div className="flex h-8 items-center text-[14px]">{settings.slotMinutes} minutes</div>
         </div>
       </div>
       <div>
@@ -411,10 +411,10 @@ function MeetingsTab() {
         <TimezoneSelect id="m-tz" value={tz} onChange={setTz} />
       </div>
       <fieldset>
-        <legend className="mb-1 text-[12px] font-medium text-fg-secondary">Working days</legend>
+        <legend className="mb-1 text-[13px] font-medium text-fg-secondary">Working days</legend>
         <div className="flex flex-wrap gap-3">
           {DAYS.map((d, i) => (
-            <label key={d} className="flex items-center gap-1.5 text-[13px]">
+            <label key={d} className="flex items-center gap-1.5 text-[14px]">
               <Checkbox checked={days.includes(i)} onCheckedChange={(c) => setDays(c ? [...days, i] : days.filter((x) => x !== i))} /> {d}
             </label>
           ))}
@@ -455,7 +455,7 @@ function MeetingsTab() {
         <div className="mt-2 flex flex-wrap gap-1.5">
           {blocked.length === 0 ? <span className="caption">None</span> : null}
           {[...blocked].sort().map((d) => (
-            <span key={d} className="num inline-flex items-center gap-1 rounded-full bg-surface-muted px-2 py-0.5 text-[12px]">
+            <span key={d} className="num inline-flex items-center gap-1 rounded-full bg-surface-muted px-2 py-0.5 text-[13px]">
               {d}
               <button type="button" aria-label={`Unblock ${d}`} onClick={() => setBlocked(blocked.filter((x) => x !== d))}>
                 <X className="size-3" />
@@ -489,7 +489,7 @@ export function SettingsPage() {
             role="tab"
             aria-selected={tab === t.id}
             onClick={() => setTab(t.id)}
-            className={cn("-mb-px h-9 shrink-0 border-b-2 border-transparent px-3 text-[13px] font-medium text-fg-muted hover:text-fg", tab === t.id && "border-primary text-fg")}
+            className={cn("-mb-px h-9 shrink-0 border-b-2 border-transparent px-3 text-[14px] font-medium text-fg-muted hover:text-fg", tab === t.id && "border-primary text-fg")}
           >
             {t.label}
           </button>

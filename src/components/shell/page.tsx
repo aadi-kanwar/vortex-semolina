@@ -9,7 +9,7 @@ export function PageHeader({ title, subtitle, children }: { title: React.ReactNo
     <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
       <div className="min-w-0">
         <h1 className="page-title">{title}</h1>
-        {subtitle ? <p className="mt-0.5 text-[13px] text-fg-muted">{subtitle}</p> : null}
+        {subtitle ? <p className="mt-0.5 text-[14px] text-fg-muted">{subtitle}</p> : null}
       </div>
       {children ? <div className="flex flex-wrap items-center gap-2">{children}</div> : null}
     </div>
@@ -21,7 +21,7 @@ export function SearchButton({ className }: { className?: string }) {
   return (
     <button
       onClick={open}
-      className={cn("flex h-8 w-44 items-center gap-2 rounded-[8px] border border-border bg-surface px-2.5 text-[13px] text-fg-muted hover:bg-surface-muted", className)}
+      className={cn("flex h-8 w-44 items-center gap-2 rounded-[8px] border border-border bg-surface px-2.5 text-[14px] text-fg-muted hover:bg-surface-muted", className)}
       aria-label="Search (⌘K)"
     >
       <Search className="size-4" />

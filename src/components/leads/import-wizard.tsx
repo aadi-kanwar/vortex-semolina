@@ -173,7 +173,7 @@ export function ImportWizard({ open, onOpenChange }: { open: boolean; onOpenChan
       }}
     >
       <DialogContent title="Import leads" description="From .xlsx, .xls or .csv. The first row must be the column headers." className="max-w-4xl">
-        <ol className="mb-4 flex gap-2 text-[12px]" aria-label="Steps">
+        <ol className="mb-4 flex gap-2 text-[13px]" aria-label="Steps">
           {["Preview", "Map columns", "Options", "Import"].map((s, i) => (
             <li key={s} className={cn("flex items-center gap-1.5 rounded-full px-2.5 py-1", i === stepIdx ? "bg-accent-soft text-accent-soft-fg font-medium" : i < stepIdx ? "text-fg-secondary" : "text-fg-muted")}>
               <span className="num">{i + 1}.</span> {s}
@@ -198,7 +198,7 @@ export function ImportWizard({ open, onOpenChange }: { open: boolean; onOpenChan
               className={cn("flex cursor-pointer flex-col items-center gap-2 rounded-[10px] border border-dashed border-border p-6 text-center hover:bg-surface-muted", dragging && "border-primary bg-accent-soft")}
             >
               <FileSpreadsheet className="size-6 text-fg-muted" />
-              <span className="text-[13px] font-medium">{fileName || "Drop a file here or click to choose"}</span>
+              <span className="text-[14px] font-medium">{fileName || "Drop a file here or click to choose"}</span>
               <span className="caption">{fileName ? `${rows.length.toLocaleString("en-IN")} rows · ${headers.length} columns` : ".xlsx · .xls · .csv"}</span>
               <input type="file" accept=".xlsx,.xls,.csv" className="sr-only" onChange={(e) => e.target.files?.[0] && parse(e.target.files[0])} />
             </label>
@@ -206,7 +206,7 @@ export function ImportWizard({ open, onOpenChange }: { open: boolean; onOpenChan
               <div className="mt-4">
                 <div className="caption mb-1.5">First {preview.length} rows</div>
                 <div className="max-h-72 overflow-auto rounded-[8px] border border-border">
-                  <table className="w-full text-[12px]">
+                  <table className="w-full text-[13px]">
                     <thead className="sticky top-0 bg-surface-muted">
                       <tr>
                         {headers.map((h, i) => (
@@ -243,8 +243,8 @@ export function ImportWizard({ open, onOpenChange }: { open: boolean; onOpenChan
         {step === "map" ? (
           <>
             <div className="max-h-[50vh] overflow-auto rounded-[8px] border border-border">
-              <table className="w-full text-[13px]">
-                <thead className="sticky top-0 bg-surface-muted text-[12px] text-fg-muted">
+              <table className="w-full text-[14px]">
+                <thead className="sticky top-0 bg-surface-muted text-[13px] text-fg-muted">
                   <tr>
                     <th className="px-3 py-2 text-left font-medium">Spreadsheet column</th>
                     <th className="px-3 py-2 text-left font-medium">Sample</th>
@@ -311,8 +311,8 @@ export function ImportWizard({ open, onOpenChange }: { open: boolean; onOpenChan
               </table>
             </div>
             {/* DECISION: new fields from import can't be selects (their options are unknown up front); add options later in Settings. */}
-            {missingRequired.length ? <p className="mt-2 text-[12px] text-danger">Map a column to: {missingRequired.map((f) => f.label).join(", ")}</p> : null}
-            {dupKeys.length ? <p className="mt-2 text-[12px] text-danger">Each field can only be mapped once.</p> : null}
+            {missingRequired.length ? <p className="mt-2 text-[13px] text-danger">Map a column to: {missingRequired.map((f) => f.label).join(", ")}</p> : null}
+            {dupKeys.length ? <p className="mt-2 text-[13px] text-danger">Each field can only be mapped once.</p> : null}
             <DialogFooter>
               <Button onClick={() => setStep("file")}>Back</Button>
               <Button variant="primary" disabled={!canContinueMap} onClick={() => setStep("options")}>
@@ -371,7 +371,7 @@ export function ImportWizard({ open, onOpenChange }: { open: boolean; onOpenChan
 
         {step === "run" ? (
           <div>
-            <div className="mb-2 flex justify-between text-[13px]">
+            <div className="mb-2 flex justify-between text-[14px]">
               <span>{running ? "Importing…" : "Done"}</span>
               <span className="num">{Math.round(progress * 100)}%</span>
             </div>
@@ -394,7 +394,7 @@ export function ImportWizard({ open, onOpenChange }: { open: boolean; onOpenChan
                   <div className="caption">Errors</div>
                   <div className={cn("kpi-number", result.errors.length && "text-danger")}>{result.errors.length.toLocaleString("en-IN")}</div>
                   {result.errors.length ? (
-                    <button className="link mt-1 text-[12px]" onClick={downloadErrors}>
+                    <button className="link mt-1 text-[13px]" onClick={downloadErrors}>
                       Download error CSV
                     </button>
                   ) : null}

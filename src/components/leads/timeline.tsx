@@ -72,10 +72,10 @@ export function Timeline({ leadId }: { leadId: Doc<"leads">["_id"] }) {
               <span className="absolute -bottom-0.5 -right-0.5 size-2 rounded-full ring-2 ring-[var(--surface)]" style={{ background: ACTIVITY_DOT[a.type] }} aria-hidden />
             </span>
             <div className="min-w-0 flex-1">
-              <div className="text-[13px]">
+              <div className="text-[14px]">
                 <span className="font-medium">{u?.name ?? "Someone"}</span> <span className="text-fg-secondary">{describe(a)}</span>
               </div>
-              {a.type === "note" ? <p className="mt-1 whitespace-pre-wrap rounded-[8px] bg-surface-muted px-2.5 py-2 text-[13px]">{a.payload.text}</p> : null}
+              {a.type === "note" ? <p className="mt-1 whitespace-pre-wrap rounded-[8px] bg-surface-muted px-2.5 py-2 text-[14px]">{a.payload.text}</p> : null}
               <time className="caption" dateTime={new Date(a.createdAt).toISOString()} title={new Date(a.createdAt).toLocaleString()}>
                 {relative(a.createdAt)}
               </time>

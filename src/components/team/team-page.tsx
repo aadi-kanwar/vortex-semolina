@@ -162,8 +162,8 @@ export function TeamPage() {
         </Button>
       </PageHeader>
       <div className="card overflow-x-auto">
-        <table className="w-full min-w-[720px] text-[13px]">
-          <thead className="text-[12px] text-fg-muted">
+        <table className="w-full min-w-[720px] text-[14px]">
+          <thead className="text-[13px] text-fg-muted">
             <tr className="border-b border-border">
               <th className="px-4 py-2 text-left font-medium">Member</th>
               <th className="px-4 py-2 text-left font-medium">Role</th>
@@ -232,7 +232,7 @@ export function TeamPage() {
       <Dialog open={addOpen} onOpenChange={setAddOpen}>
         {created ? (
           <DialogContent title="Member added" description="Share these sign-in details privately. They’ll be asked to set their own password on first sign-in.">
-            <div className="space-y-2 rounded-[8px] bg-surface-muted p-3 text-[13px]">
+            <div className="space-y-2 rounded-[8px] bg-surface-muted p-3 text-[14px]">
               <div>
                 <span className="text-fg-muted">Email:</span> {created.email}
               </div>
