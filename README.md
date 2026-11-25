@@ -27,10 +27,10 @@ The first run asks you to log in and create a project. It writes `CONVEX_DEPLOYM
 Logins live in Convex too: email + password, passwords hashed (Scrypt), sign-in rate-limited. Generate the signing keys once per deployment:
 
 ```bash
-npx @convex-dev/auth
+npm run auth-keys -- http://localhost:3000
 ```
 
-This sets `JWT_PRIVATE_KEY`, `JWKS` and `SITE_URL` on the Convex deployment. On production, pass `--prod` and set `SITE_URL` to your real URL.
+This sets `JWT_PRIVATE_KEY`, `JWKS` and `SITE_URL` on the deployment in `.env.local`. For production, see section 4.
 
 There's no self sign-up. Admins create every account (see below).
 
@@ -54,15 +54,23 @@ This adds 2 demo members (Priya Sharma, and Arjun Mehta with a 10% rate override
 
 ## 2. Making the first admin
 
-The first admin is created directly in the **production** Convex database:
+**Option A: environment variables (no terminal).** In the Convex dashboard → your **production** deployment → Settings → Environment variables, add:
+
+| Name | Value |
+|---|---|
+| `ADMIN_EMAIL` | you@company.com |
+| `ADMIN_NAME` | Your Name |
+| `ADMIN_PASSWORD` | a temporary password (8+ characters) |
+
+Open `/sign-in`. On load, the page creates that admin, but only if the deployment has no active admin yet. Sign in with the temporary password and choose your own. Then **delete `ADMIN_PASSWORD`** from the dashboard. It no longer works anyway, and once an admin exists the variables are ignored.
+
+**Option B: command line.**
 
 ```bash
 npx convex run --prod users:createAdmin '{"email":"you@company.com","name":"Your Name","password":"a-temporary-password"}'
 ```
 
 (With a deploy key instead of a logged-in CLI: `CONVEX_DEPLOY_KEY=<prod key> npx convex run users:createAdmin '{...}'`.)
-
-Sign in at `/sign-in` with that password. You'll be asked to choose your own straight away, so the temporary one in your shell history stops working.
 
 Running it again for an existing email promotes that user to admin and sets a new temporary password. Use this if you ever lock yourself out.
 
@@ -87,12 +95,12 @@ Don't run `npm run seed` against production. Its demo users have no passwords an
 2. In Convex, open your project → **Settings → Deploy key** → generate a **Production** deploy key.
 3. In Vercel → Project → **Settings → Environment Variables**, add:
    - `CONVEX_DEPLOY_KEY`: the production deploy key (the only variable Vercel needs)
-4. Set the **Build Command** to:
+4. Leave the **Build Command** on Vercel's default. The `vercel-build` script in `package.json` runs `convex deploy --cmd 'npm run build'`, which deploys the Convex functions and injects `NEXT_PUBLIC_CONVEX_URL` into the Next build. If you override the Build Command, use `npm run vercel-build`.
+5. Set the auth keys on production once:
+   ```bash
+   CONVEX_DEPLOY_KEY='<prod deploy key>' npm run auth-keys -- https://<your-app>.vercel.app
    ```
-   npx convex deploy --cmd 'npm run build'
-   ```
-   This deploys the Convex functions and injects `NEXT_PUBLIC_CONVEX_URL` into the Next build.
-5. Generate auth keys on production once: `npx @convex-dev/auth --prod`, then `npx convex env set --prod SITE_URL https://<your-app>.vercel.app`.
+   This generates `JWT_PRIVATE_KEY` and `JWKS` (only if missing) and sets `SITE_URL`.
 6. Create the first admin (section 2).
 
 ---

@@ -2,7 +2,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthActions } from "@convex-dev/auth/react";
-import { useConvexAuth } from "convex/react";
+import { useAction, useConvexAuth } from "convex/react";
+import { api } from "@convex/_generated/api";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
@@ -17,6 +18,12 @@ export default function SignInPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  // Creates the first admin from ADMIN_* env vars on a fresh deployment (no-op otherwise).
+  const bootstrap = useAction(api.users.bootstrapAdmin);
+  useEffect(() => {
+    bootstrap().catch(() => {});
+  }, [bootstrap]);
 
   useEffect(() => {
     if (isAuthenticated) router.replace("/dashboard");
