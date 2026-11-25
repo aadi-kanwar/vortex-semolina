@@ -1,7 +1,8 @@
 "use client";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthActions } from "@convex-dev/auth/react";
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
-import { RedirectToSignIn, SignOutButton } from "@clerk/nextjs";
 import { AppDataProvider } from "@/components/app-data";
 import { Sidebar } from "@/components/shell/sidebar";
 import { ThemeSync } from "@/components/shell/theme";
@@ -33,15 +34,22 @@ function ShellSkeleton() {
   );
 }
 
+function ToSignIn() {
+  const router = useRouter();
+  useEffect(() => router.replace("/sign-in"), [router]);
+  return null;
+}
+
 function Deactivated() {
+  const { signOut } = useAuthActions();
   return (
     <div className="grid min-h-dvh place-items-center p-6">
       <div className="card max-w-sm p-6 text-center">
         <div className="card-title">Your account is deactivated</div>
         <p className="caption mt-2">Ask an admin to reactivate you.</p>
-        <SignOutButton>
-          <Button className="mt-4">Sign out</Button>
-        </SignOutButton>
+        <Button className="mt-4" onClick={() => signOut()}>
+          Sign out
+        </Button>
       </div>
     </div>
   );
@@ -54,7 +62,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <ShellSkeleton />
       </AuthLoading>
       <Unauthenticated>
-        <RedirectToSignIn />
+        <ToSignIn />
       </Unauthenticated>
       <Authenticated>
         <AppDataProvider fallback={<ShellSkeleton />} deactivated={<Deactivated />} noAccess={<NoAccess />} changePassword={<ChangePassword />}>

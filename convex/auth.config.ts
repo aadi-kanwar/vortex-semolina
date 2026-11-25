@@ -1,9 +1,4 @@
-// Clerk issues a JWT (template name "convex"); Convex verifies it against this issuer.
+// Convex Auth issues its own JWTs; CONVEX_SITE_URL is set automatically.
 export default {
-  providers: [
-    {
-      domain: process.env.CLERK_JWT_ISSUER_DOMAIN!,
-      applicationID: "convex",
-    },
-  ],
+  providers: [{ domain: process.env.CONVEX_SITE_URL, applicationID: "convex" }],
 };

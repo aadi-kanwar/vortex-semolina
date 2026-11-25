@@ -1,3 +1,4 @@
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError } from "convex/values";
 import type { Doc, Id } from "../_generated/dataModel";
 import type { MutationCtx, QueryCtx } from "../_generated/server";
@@ -5,12 +6,8 @@ import type { MutationCtx, QueryCtx } from "../_generated/server";
 type Ctx = QueryCtx | MutationCtx;
 
 export async function getViewer(ctx: Ctx): Promise<Doc<"users"> | null> {
-  const identity = await ctx.auth.getUserIdentity();
-  if (!identity) return null;
-  return await ctx.db
-    .query("users")
-    .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
-    .unique();
+  const userId = await getAuthUserId(ctx);
+  return userId ? await ctx.db.get(userId) : null;
 }
 
 /** Signed-in, synced and active user. Every public function calls this first. */

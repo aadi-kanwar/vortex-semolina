@@ -8,9 +8,11 @@
  * @module
  */
 
+import type * as auth from "../auth.js";
 import type * as commissions from "../commissions.js";
 import type * as dashboard from "../dashboard.js";
 import type * as fields from "../fields.js";
+import type * as http from "../http.js";
 import type * as imports from "../imports.js";
 import type * as leads from "../leads.js";
 import type * as lib_auth from "../lib/auth.js";
@@ -34,9 +36,11 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  auth: typeof auth;
   commissions: typeof commissions;
   dashboard: typeof dashboard;
   fields: typeof fields;
+  http: typeof http;
   imports: typeof imports;
   leads: typeof leads;
   "lib/auth": typeof lib_auth;

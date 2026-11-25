@@ -1,16 +1,18 @@
 "use client";
-import { useAuth } from "@clerk/nextjs";
+import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { ConvexReactClient } from "convex/react";
-import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
+// DECISION: Convex Auth's client provider (tokens in localStorage) rather than
+// its Next.js cookie/middleware variant: every page here is client-rendered
+// behind <Authenticated>, so there's nothing to protect server-side.
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
+    <ConvexAuthProvider client={convex}>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
         <TooltipProvider>
           {children}
@@ -22,6 +24,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
           />
         </TooltipProvider>
       </ThemeProvider>
-    </ConvexProviderWithClerk>
+    </ConvexAuthProvider>
   );
 }

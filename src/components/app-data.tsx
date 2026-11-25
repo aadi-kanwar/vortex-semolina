@@ -6,7 +6,7 @@ import { api } from "@convex/_generated/api";
 import type { Doc, Id } from "@convex/_generated/dataModel";
 import { errorMessage } from "@/lib/utils";
 
-type PublicUser = Omit<Doc<"users">, "clerkId"> & { hasSignedIn: boolean };
+type PublicUser = Doc<"users">;
 type Settings = FunctionReturnType<typeof api.settings.get>;
 
 export interface AppData {
@@ -29,7 +29,7 @@ export function useApp() {
   return v;
 }
 
-/** Syncs the Clerk user into Convex, then loads the lookups every screen needs. */
+/** Checks the signed-in user, then loads the lookups every screen needs. */
 export function AppDataProvider({
   children,
   fallback,

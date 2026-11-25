@@ -1,6 +1,5 @@
 "use client";
 import * as React from "react";
-import Image from "next/image";
 import { avatarClass, pillStyle } from "@/lib/colors";
 import { cn } from "@/lib/utils";
 
@@ -28,7 +27,8 @@ export function initials(name?: string) {
 
 export function Avatar({ id, name, url, size = 22, className }: { id?: string; name?: string; url?: string; size?: number; className?: string }) {
   if (url) {
-    return <Image src={url} alt={name ?? ""} width={size} height={size} className={cn("shrink-0 rounded-full object-cover", className)} style={{ width: size, height: size }} />;
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={url} alt={name ?? ""} width={size} height={size} className={cn("shrink-0 rounded-full object-cover", className)} style={{ width: size, height: size }} />;
   }
   return (
     <span

@@ -15,7 +15,7 @@ export const run = internalMutation({
   args: {},
   handler: async (ctx) => {
     await ensureSeeded(ctx);
-    if (await ctx.db.query("users").withIndex("by_email", (q) => q.eq("email", "priya@example.com")).first()) {
+    if (await ctx.db.query("users").withIndex("email", (q) => q.eq("email", "priya@example.com")).first()) {
       return "Seed data already present";
     }
     const priya = await ctx.db.insert("users", { name: "Priya Sharma", email: "priya@example.com", role: "member", active: true, themePreference: "system" });

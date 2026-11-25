@@ -1,3 +1,4 @@
+import { authTables } from "@convex-dev/auth/server";
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 import {
@@ -12,9 +13,10 @@ import {
 } from "./lib/validators";
 
 export default defineSchema({
+  // Convex Auth: sessions, accounts (hashed passwords), refresh tokens, rate limits.
+  ...authTables,
+
   users: defineTable({
-    // Set on first sign-in for admins created from the CLI; set at creation for members added from the Team page.
-    clerkId: v.optional(v.string()),
     name: v.string(),
     email: v.string(),
     avatarUrl: v.optional(v.string()),
@@ -22,11 +24,12 @@ export default defineSchema({
     active: v.boolean(),
     commissionRateOverride: v.optional(v.number()),
     themePreference: v.optional(themePreference),
+    // Written by Convex Auth if email verification is ever turned on.
+    emailVerificationTime: v.optional(v.number()),
     // True while the user still has the temporary password an admin gave them.
     mustChangePassword: v.optional(v.boolean()),
   })
-    .index("by_clerkId", ["clerkId"])
-    .index("by_email", ["email"])
+    .index("email", ["email"])
     .index("by_role", ["role"]),
 
   fieldDefinitions: defineTable({

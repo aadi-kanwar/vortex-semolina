@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useMutation } from "convex/react";
+import { useAction, useMutation } from "convex/react";
 import { Copy, KeyRound, RefreshCw, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -49,12 +49,6 @@ function PasswordField({ id, value, onChange }: { id: string; value: string; onC
   );
 }
 
-async function api_(method: "POST" | "PATCH", body: unknown) {
-  const r = await fetch("/api/members", { method, headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
-  const data = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(data.error ?? "Request failed");
-  return data;
-}
 const rateSchema = z.coerce.number().min(0, "0–100").max(100, "0–100");
 
 function RateInput({ user }: { user: PublicUser }) {
@@ -102,6 +96,8 @@ export function TeamPage() {
   const { users, me } = useApp();
   const setRole = useMutation(api.users.setRole);
   const setActive = useMutation(api.users.setActive);
+  const addMember = useAction(api.users.addMember);
+  const resetPassword = useAction(api.users.resetPassword);
   const [addOpen, setAddOpen] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", role: "member" as "admin" | "member", password: "" });
   const [busy, setBusy] = useState(false);
@@ -125,7 +121,7 @@ export function TeamPage() {
     if (!p.success) return toast.error(p.error.issues[0].message);
     setBusy(true);
     try {
-      await api_("POST", p.data);
+      await addMember(p.data);
       toast.success(`${p.data.name} added`);
       setCreated({ email: p.data.email.toLowerCase(), password: p.data.password });
     } catch (err) {
@@ -140,7 +136,7 @@ export function TeamPage() {
     if (resetPw.length < 8) return toast.error("Temporary password must be at least 8 characters");
     setBusy(true);
     try {
-      await api_("PATCH", { userId: resetFor._id, password: resetPw });
+      await resetPassword({ userId: resetFor._id as Id<"users">, password: resetPw });
       toast.success(`New temporary password set for ${resetFor.name}. Share it with them.`);
       setResetFor(null);
     } catch (err) {
@@ -195,7 +191,7 @@ export function TeamPage() {
                     aria-label={`Role for ${u.name}`}
                     value={u.role}
                     disabled={u._id === me._id}
-                    className="w-28"
+                    className="w-32"
                     onChange={(e) => run(setRole({ userId: u._id as Id<"users">, role: e.target.value as "admin" | "member" }), `${u.name} is now ${e.target.value}`)}
                   >
                     <option value="member">Member</option>
@@ -208,7 +204,7 @@ export function TeamPage() {
                 <td className="px-4 py-2.5">
                   <div className="flex flex-wrap gap-1">
                     {u.active ? <Pill color="#16A34A">Active</Pill> : <Pill color="#A1A1AA">Deactivated</Pill>}
-                    {!u.hasSignedIn ? <Pill color="#F59E0B">Never signed in</Pill> : u.mustChangePassword ? <Pill color="#F59E0B">Temp password</Pill> : null}
+                    {u.mustChangePassword ? <Pill color="#F59E0B">Temporary password</Pill> : null}
                   </div>
                 </td>
                 <td className="px-4 py-2.5 text-right">

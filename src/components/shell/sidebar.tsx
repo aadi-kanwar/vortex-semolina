@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useClerk } from "@clerk/nextjs";
+import { useAuthActions } from "@convex-dev/auth/react";
 import { useMutation, useQuery } from "convex/react";
 import { Bell, CalendarDays, Contact, KeyRound, LayoutDashboard, LogOut, Menu, Settings, Users, Wallet, X } from "lucide-react";
 import { api } from "@convex/_generated/api";
@@ -13,6 +13,7 @@ import { useLeadPanel } from "@/hooks/use-lead-panel";
 import { relative } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { ThemeSwitch } from "./theme";
+import { ChangePasswordDialog } from "./account-screens";
 
 function Logo() {
   return (
@@ -89,7 +90,8 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
   const { me, isAdmin } = useApp();
   const leadCount = useQuery(api.leads.count);
   const pending = useQuery(api.commissions.pendingCount);
-  const { signOut, openUserProfile } = useClerk();
+  const { signOut } = useAuthActions();
+  const [pwOpen, setPwOpen] = useState(false);
   return (
     <div className="flex h-full flex-col gap-4 p-3">
       <div className="pt-1">
@@ -116,15 +118,16 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
             <div className="caption capitalize">{me.role}</div>
           </div>
           <Notifications />
-          <button onClick={() => openUserProfile()} className="grid size-7 place-items-center rounded-[6px] text-fg-muted hover:bg-surface-muted hover:text-fg" aria-label="Account and password" title="Account & password">
+          <button onClick={() => setPwOpen(true)} className="grid size-7 place-items-center rounded-[6px] text-fg-muted hover:bg-surface-muted hover:text-fg" aria-label="Change password" title="Change password">
             <KeyRound className="size-4" />
           </button>
-          <button onClick={() => signOut({ redirectUrl: "/sign-in" })} className="grid size-7 place-items-center rounded-[6px] text-fg-muted hover:bg-surface-muted hover:text-fg" aria-label="Sign out" title="Sign out">
+          <button onClick={() => signOut()} className="grid size-7 place-items-center rounded-[6px] text-fg-muted hover:bg-surface-muted hover:text-fg" aria-label="Sign out" title="Sign out">
             <LogOut className="size-4" />
           </button>
         </div>
         <ThemeSwitch />
       </div>
+      <ChangePasswordDialog open={pwOpen} onOpenChange={setPwOpen} />
     </div>
   );
 }
