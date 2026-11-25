@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "seed": "convex run seed:run"
+    "seed": "convex run seed:run",
+    "auth-keys": "node scripts/set-auth-keys.mjs"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.5",
