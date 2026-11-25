@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthActions } from "@convex-dev/auth/react";
-import { useAction, useConvexAuth } from "convex/react";
+import { useAction, useConvexAuth, useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -21,9 +21,19 @@ export default function SignInPage() {
 
   // Creates the first admin from ADMIN_* env vars on a fresh deployment (no-op otherwise).
   const bootstrap = useAction(api.users.bootstrapAdmin);
+  const setup = useQuery(api.users.setupStatus);
+  const [setupError, setSetupError] = useState<string | null>(null);
   useEffect(() => {
-    bootstrap().catch(() => {});
+    bootstrap()
+      .then((r) => setSetupError(r.status === "error" ? r.message ?? "Admin setup failed" : null))
+      .catch(() => setSetupError("Couldn't reach the server. Is the Convex code deployed?"));
   }, [bootstrap]);
+  const problems = [
+    setupError,
+    setup && !setup.authKeys ? "Sign-in keys are missing on this Convex deployment. Run: npm run auth-keys -- <site url>" : null,
+    setup && !setup.siteUrl ? "SITE_URL is not set on this Convex deployment." : null,
+    setup && !setup.hasAdmin && !setup.adminEnv ? "No admin yet. Set ADMIN_EMAIL, ADMIN_NAME and ADMIN_PASSWORD in Convex, then reload." : null,
+  ].filter(Boolean) as string[];
 
   useEffect(() => {
     if (isAuthenticated) router.replace("/dashboard");
@@ -38,6 +48,14 @@ export default function SignInPage() {
         </div>
         <h1 className="page-title">Sign in</h1>
         <p className="caption mb-4 mt-1">Use the email and password your admin gave you.</p>
+        {problems.length ? (
+          <div role="status" className="mb-4 space-y-1 rounded-[8px] border border-warning-border bg-warning-bg px-3 py-2 text-[12px] text-warning-fg">
+            <div className="font-semibold">Setup needed</div>
+            {problems.map((p) => (
+              <p key={p}>{p}</p>
+            ))}
+          </div>
+        ) : null}
         <form
           className="space-y-3"
           noValidate

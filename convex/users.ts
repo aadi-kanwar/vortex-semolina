@@ -199,21 +199,41 @@ export const hasActiveAdmin = internalQuery({
  */
 export const bootstrapAdmin = action({
   args: {},
-  handler: async (ctx): Promise<"not_configured" | "exists" | "created"> => {
+  handler: async (ctx): Promise<{ status: "not_configured" | "exists" | "created" | "error"; message?: string }> => {
     const email = process.env.ADMIN_EMAIL?.trim().toLowerCase();
     const password = process.env.ADMIN_PASSWORD;
-    if (!email || !password) return "not_configured";
-    if (await ctx.runQuery(internal.users.hasActiveAdmin, {})) return "exists";
-    if (await ctx.runQuery(internal.users.byEmail, { email })) return "exists";
+    if (!email || !password) return { status: "not_configured" };
+    if (await ctx.runQuery(internal.users.hasActiveAdmin, {})) return { status: "exists" };
+    if (await ctx.runQuery(internal.users.byEmail, { email })) {
+      return { status: "error", message: `${email} already exists but isn't an active admin. Run users:createAdmin for it.` };
+    }
+    // Production hides thrown error text, so problems are returned as messages.
+    if (!EMAIL_RE.test(email)) return { status: "error", message: "ADMIN_EMAIL is not a valid email" };
+    if (password.length < 8) return { status: "error", message: "ADMIN_PASSWORD must be at least 8 characters" };
+    if (!process.env.JWT_PRIVATE_KEY || !process.env.JWKS) return { status: "error", message: "Auth keys missing: run `npm run auth-keys` for this deployment" };
     await ctx.runMutation(internal.users.ensureSeededInternal, {});
     try {
       await newAccount(ctx, { email, name: process.env.ADMIN_NAME?.trim() || email.split("@")[0], password, role: "admin", mustChangePassword: true });
     } catch (e) {
       // Two tabs racing: the second one finds the email taken.
-      if (await ctx.runQuery(internal.users.byEmail, { email })) return "exists";
-      throw e;
+      if (await ctx.runQuery(internal.users.byEmail, { email })) return { status: "exists" };
+      return { status: "error", message: e instanceof ConvexError ? String(e.data) : "Could not create the admin. Check the Convex logs." };
     }
-    return "created";
+    return { status: "created" };
+  },
+});
+
+/** Booleans only (never values): lets the sign-in page explain setup problems. */
+export const setupStatus = query({
+  args: {},
+  handler: async (ctx) => {
+    const admins = await ctx.db.query("users").withIndex("by_role", (q) => q.eq("role", "admin")).collect();
+    return {
+      authKeys: !!process.env.JWT_PRIVATE_KEY && !!process.env.JWKS,
+      siteUrl: !!process.env.SITE_URL,
+      hasAdmin: admins.some((a) => a.active),
+      adminEnv: !!process.env.ADMIN_EMAIL && !!process.env.ADMIN_PASSWORD,
+    };
   },
 });
 
