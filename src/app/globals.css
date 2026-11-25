@@ -1,0 +1,233 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------- Design tokens (§2.1). Components use ONLY these. ---------- */
+:root {
+  --bg: #fafafa;
+  --surface: #ffffff;
+  --surface-muted: #f4f4f5;
+  --border: #e4e4e7;
+  --text: #18181b;
+  --text-secondary: #3f3f46;
+  --text-muted: #52525b;
+  --primary: #4f46e5;
+  --primary-fg: #ffffff;
+  --link: #4338ca;
+  --accent-soft: #eef2ff;
+  --accent-soft-fg: #3730a3;
+  --accent-soft-border: #c7d2fe;
+  --hero: #312e81;
+  --hero-fg: #ffffff;
+  --hero-caption: #c7d2fe;
+  --warning-bg: #fffbeb;
+  --warning-border: #fcd34d;
+  --warning-fg: #92400e;
+  --success: #15803d;
+  --danger: #b91c1c;
+  --seg-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --overlay: rgba(9, 9, 11, 0.4);
+
+  /* Avatars: pastel bg / dark fg */
+  --av-0-bg: #fde68a; --av-0-fg: #78350f;
+  --av-1-bg: #bfdbfe; --av-1-fg: #1e3a8a;
+  --av-2-bg: #fbcfe8; --av-2-fg: #831843;
+  --av-3-bg: #bbf7d0; --av-3-fg: #14532d;
+
+  /* shadcn aliases */
+  --background: var(--bg);
+  --foreground: var(--text);
+  --card: var(--surface);
+  --card-foreground: var(--text);
+  --popover: var(--surface);
+  --popover-foreground: var(--text);
+  --muted: var(--surface-muted);
+  --muted-foreground: var(--text-muted);
+  --input: var(--border);
+  --ring: var(--primary);
+  --radius: 12px;
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #09090b;
+  --surface: #18181b;
+  --surface-muted: #202024;
+  --border: #27272a;
+  --text: #fafafa;
+  --text-secondary: #d4d4d8;
+  --text-muted: #a1a1aa;
+  --primary: #4f46e5;
+  --primary-fg: #ffffff;
+  --link: #a5b4fc;
+  --accent-soft: #1e1b4b;
+  --accent-soft-fg: #c7d2fe;
+  --accent-soft-border: #3730a3;
+  --hero: #3730a3;
+  --hero-fg: #ffffff;
+  --hero-caption: #c7d2fe;
+  --warning-bg: #2a1f0a;
+  --warning-border: #78550f;
+  --warning-fg: #fcd34d;
+  --success: #4ade80;
+  --danger: #f87171;
+  --seg-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --overlay: rgba(0, 0, 0, 0.6);
+
+  /* Avatars: inverted pairs */
+  --av-0-bg: #78350f; --av-0-fg: #fde68a;
+  --av-1-bg: #1e3a8a; --av-1-fg: #bfdbfe;
+  --av-2-bg: #831843; --av-2-fg: #fbcfe8;
+  --av-3-bg: #14532d; --av-3-fg: #bbf7d0;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-border: var(--border);
+  --color-fg: var(--text);
+  --color-fg-secondary: var(--text-secondary);
+  --color-fg-muted: var(--text-muted);
+  --color-primary: var(--primary);
+  --color-primary-fg: var(--primary-fg);
+  --color-link: var(--link);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-soft-fg: var(--accent-soft-fg);
+  --color-accent-soft-border: var(--accent-soft-border);
+  --color-hero: var(--hero);
+  --color-hero-fg: var(--hero-fg);
+  --color-hero-caption: var(--hero-caption);
+  --color-warning-bg: var(--warning-bg);
+  --color-warning-border: var(--warning-border);
+  --color-warning-fg: var(--warning-fg);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-card: var(--card);
+  --color-popover: var(--popover);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-card: 12px;
+  --radius-control: 8px;
+  --radius-nav: 7px;
+  --shadow-seg: var(--seg-shadow);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html {
+    font-size: 14px;
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--accent-soft);
+    color: var(--accent-soft-fg);
+  }
+}
+
+@layer components {
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .page-title {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .hero-number {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .kpi-number {
+    font-size: 22px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .caption {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .link {
+    color: var(--link);
+    font-weight: 500;
+  }
+  .link:hover {
+    text-decoration: underline;
+  }
+
+  /* Status pills: tints computed per status (see src/lib/colors.ts). */
+  .pill {
+    background: var(--pl-bg);
+    color: var(--pl-fg);
+  }
+  .dark .pill {
+    background: var(--pd-bg);
+    color: var(--pd-fg);
+  }
+  .swatch {
+    background: var(--sw);
+  }
+
+  .av-0 { background: var(--av-0-bg); color: var(--av-0-fg); }
+  .av-1 { background: var(--av-1-bg); color: var(--av-1-fg); }
+  .av-2 { background: var(--av-2-bg); color: var(--av-2-fg); }
+  .av-3 { background: var(--av-3-bg); color: var(--av-3-fg); }
+
+  .skeleton {
+    background: var(--surface-muted);
+    border-radius: 6px;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    50% { opacity: 0.55; }
+  }
+
+  /* Calendar event styles */
+  .ev-requested {
+    border: 1.5px dashed var(--ev);
+    background: var(--surface);
+    color: var(--text);
+  }
+  .ev-scheduled {
+    border: 1.5px solid var(--ev);
+    background: var(--accent-soft);
+    color: var(--accent-soft-fg);
+  }
+  .ev-closed {
+    border: 1px solid var(--border);
+    background: var(--surface-muted);
+    color: var(--text-muted);
+  }
+  .ev-cancelled .ev-title,
+  .ev-no_show .ev-title {
+    text-decoration: line-through;
+  }
+}
