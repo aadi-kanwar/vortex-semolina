@@ -5,7 +5,13 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
-const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+const url = process.env.NEXT_PUBLIC_CONVEX_URL;
+if (!url) {
+  throw new Error(
+    "NEXT_PUBLIC_CONVEX_URL is not set. Locally: run `npx convex dev`. On Vercel: set CONVEX_DEPLOY_KEY and build with `npm run vercel-build` (= convex deploy --cmd 'npm run build').",
+  );
+}
+const convex = new ConvexReactClient(url);
 
 // DECISION: Convex Auth's client provider (tokens in localStorage) rather than
 // its Next.js cookie/middleware variant: every page here is client-rendered

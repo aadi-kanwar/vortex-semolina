@@ -10,7 +10,8 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "seed": "convex run seed:run",
-    "auth-keys": "node scripts/set-auth-keys.mjs"
+    "auth-keys": "node scripts/set-auth-keys.mjs",
+    "vercel-build": "convex deploy --cmd 'npm run build'"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.5",

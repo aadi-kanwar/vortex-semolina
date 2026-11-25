@@ -95,11 +95,7 @@ Don't run `npm run seed` against production. Its demo users have no passwords an
 2. In Convex, open your project → **Settings → Deploy key** → generate a **Production** deploy key.
 3. In Vercel → Project → **Settings → Environment Variables**, add:
    - `CONVEX_DEPLOY_KEY`: the production deploy key (the only variable Vercel needs)
-4. Set the **Build Command** to:
-   ```
-   npx convex deploy --cmd 'npm run build'
-   ```
-   This deploys the Convex functions and injects `NEXT_PUBLIC_CONVEX_URL` into the Next build.
+4. Leave the **Build Command** on Vercel's default. The `vercel-build` script in `package.json` runs `convex deploy --cmd 'npm run build'`, which deploys the Convex functions and injects `NEXT_PUBLIC_CONVEX_URL` into the Next build. If you override the Build Command, use `npm run vercel-build`.
 5. Set the auth keys on production once:
    ```bash
    CONVEX_DEPLOY_KEY='<prod deploy key>' npm run auth-keys -- https://<your-app>.vercel.app
